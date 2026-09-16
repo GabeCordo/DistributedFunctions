@@ -1,0 +1,94 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build Binary (${{ matrix.platform.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - name: linux-x86_64
+            goos: linux
+            goarch: amd64
+            ext: ""
+          - name: linux-arm64
+            goos: linux
+            goarch: arm64
+            ext: ""
+          - name: mac-x86_64
+            goos: darwin
+            goarch: amd64
+            ext: ""
+          - name: mac-arm64
+            goos: darwin
+            goarch: arm64
+            ext: ""
+          - name: windows-x86_64
+            goos: windows
+            goarch: amd64
+            ext: ".exe"
+          - name: windows-arm64
+            goos: windows
+            goarch: arm64
+            ext: ".exe"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: 'go.mod'
+
+      - name: Build binary for ${{ matrix.platform.name }}
+        run: |
+          GOOS=${{ matrix.platform.goos }} GOARCH=${{ matrix.platform.goarch }} CGO_ENABLED=0 go build -o fs-${{ matrix.platform.name }}${{ matrix.platform.ext }} ./cmd/fs
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: binary-${{ matrix.platform.name }}
+          path: fs-${{ matrix.platform.name }}${{ matrix.platform.ext }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: binary-*
+          path: artifacts
+          merge-multiple: true
+
+      - name: Extract tag message
+        id: extract_tag_msg
+        run: |
+          TAG_MSG=$(git tag -l --format='%(contents)' "${{ github.ref_name }}")
+          if [ -z "$TAG_MSG" ]; then
+            TAG_MSG=$(git log -1 --format='%B')
+          fi
+          echo "$TAG_MSG" > RELEASE_NOTES.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          body_path: RELEASE_NOTES.md
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
