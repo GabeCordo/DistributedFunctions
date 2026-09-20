@@ -414,6 +414,11 @@ func New(config *Config) (*Core, error) {
 	schedulerConfig := &scheduler.Config{}
 	core.config.FillSchedulerConfig(schedulerConfig)
 
+	if databaseUseCases.JobDatabase == nil {
+		core.logger.Alertln("job database is nil, cannot initialize scheduler")
+		return nil, errors.New("job database is nil")
+	}
+
 	sch, err := job.New(databaseUseCases.JobDatabase)
 	if err != nil {
 		core.logger.Alertln("failed to initialize the job scheduler")
