@@ -1,8 +1,17 @@
 ##########################################################################################################
+#       Base Container
+##########################################################################################################
+
+FROM golang:1.25.5 AS build-base
+
+# Install build dependencies for CGo (required by go-sqlite3)
+RUN apt-get update && apt-get install -y gcc libc6-dev -qq
+
+##########################################################################################################
 #       Builder Container
 ##########################################################################################################
 
-FROM golang:1.24.6 AS build-env
+FROM build-base AS build-env
 
 # If you want to force cache invalidation after changing a secret value,
 # you can pass a build argument with an arbitrary value that you also change
@@ -26,18 +35,19 @@ RUN --mount=type=secret,id=username  \
 WORKDIR /go/src
 COPY . .
 
-WORKDIR /go/src/cmd/fs
+WORKDIR /go/src/cmd/dfunc
 
 # Private Imports Will Fall Under ForitifiedCode
 ENV GOPRIVATE=github.com/GabeCordo
 
 RUN go mod tidy
 
-# disable cgo so the binary can be brought to a smaller container
-ENV CGO_ENABLED=0
-RUN go build -o fs --tags=production
-RUN ./fs init
-RUN ./fs doctor
+# Enable CGo and statically link for distroless compatibility
+ENV CGO_ENABLED=1
+
+RUN go build -o dfunc --tags=production -ldflags '-extldflags "-static"'
+RUN ./dfunc init
+RUN ./dfunc doctor
 
 ##########################################################################################################
 #       Production Container
@@ -45,10 +55,10 @@ RUN ./fs doctor
 
 FROM gcr.io/distroless/static-debian12
 
-COPY --from=build-env /go/src/cmd/DistributedFunctions/fs /
+COPY --from=build-env /go/src/cmd/dfunc/dfunc /
 COPY --from=build-env /root/.cache/DistributedFunctions /root/.cache/DistributedFunctions
 
 EXPOSE 8136
 EXPOSE 8137
 
-ENTRYPOINT ["/fs", "start"]
+ENTRYPOINT ["/dfunc", "start"]

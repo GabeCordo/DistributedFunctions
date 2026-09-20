@@ -16,6 +16,8 @@ curl -fsSL https://github.com/GabeCordo/DistributedFunctions/scripts/install.sh 
 
 Documentation can be found inside the docs folder [here](docs/readme.md).
 
+A quick start can be found [here](docs/quick_start.md) for learning about DistributedFunctions in five minutes.
+
 ## Disclaimer
 
 The framework is made open-source under the GNU lesser general public licence. All source code made available has been developed without the use of AI generated code that may come from sources that violate the GNU lesser general public licence. The use of AI coding tools is welcomed without the use of generated code.  

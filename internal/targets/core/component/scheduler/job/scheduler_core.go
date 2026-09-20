@@ -17,6 +17,11 @@ func Watch(scheduler *Scheduler) {
 
 		// TODO: at the moment this only works with minute scheduling
 
+		if scheduler.Jobs == nil {
+			log.Println("scheduler.Jobs is nil, cannot watch for jobs")
+			time.Sleep(1 * time.Minute)
+			continue
+		}
 		jj := scheduler.Jobs.Get(database.Filter{})
 		for _, j := range jj {
 			if job.IsTimeToRun(j) {
@@ -64,7 +69,11 @@ func Loop(scheduler *Scheduler, f func(jb job.Job) error) (err error) {
 		scheduler.mutex.RUnlock()
 
 		// the time till the next queue check is defined in the Scheduler pipeline
-		time.Sleep(time.Duration(scheduler.config.RefreshInterval) * time.Millisecond)
+		refreshInterval := 1 // default to 1ms if config is not set
+		if scheduler.config.RefreshInterval > 0 {
+			refreshInterval = scheduler.config.RefreshInterval
+		}
+		time.Sleep(time.Duration(refreshInterval) * time.Millisecond)
 	}
 }
 
@@ -83,5 +92,9 @@ func (scheduler *Scheduler) GetQueue() []job.Job {
 
 func (scheduler *Scheduler) Print() {
 
+	if scheduler.Jobs == nil {
+		log.Println("scheduler.Jobs is nil, cannot print")
+		return
+	}
 	scheduler.Jobs.Print()
 }
