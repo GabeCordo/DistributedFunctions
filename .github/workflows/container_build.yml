@@ -50,8 +50,8 @@ jobs:
           platforms: linux/amd64
           push: true
           tags: |
-            ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ github.ref_name }}
+            ghcr.io/GabeCordo/DistributedFunctions:latest
+            ghcr.io/GabeCordo/DistributedFunctions:${{ github.ref_name }}
           secrets: |
             "username=${{ github.actor }}"
             "token=${{ secrets.GITHUB_TOKEN }}"
