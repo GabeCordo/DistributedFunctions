@@ -1,12 +1,11 @@
 package controllers
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/GabeCordo/Commandline"
+	commandline "github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core"
 )
@@ -15,9 +14,14 @@ type StartCommand struct {
 }
 
 func (sc StartCommand) banner() {
-	fmt.Println("   __ _            _    \n  / _| | ___   ___| | __\n | |_| |/ _ \\ / __| |/ /\n |  _| | (_) | (__|   < \n |_| |_|\\___/ \\___|_|\\_\\")
-	fmt.Println("[+] " + terminal.Purple + "The Distributed Service Framework " + terminal.Reset)
-	fmt.Println("[+]" + terminal.Purple + " by Gabriel Cordovado 2022-25" + terminal.Reset)
+	banner := "    ___ _     _        _ _           _           _   ___                 _   _  \n" +
+		"   /   (_)___| |_ _ __(_) |__  _   _| |_ ___  __| | / __\\   _ _ __   ___| |_(_) ___  _ __  ___  \n" +
+		"  / /\\ / / __| __| '__| | '_ \\| | | | __/ _ \\/ _` |/ _\\| | | | '_ \\ / __| __| |/ _ \\| '_ \\/ __|\n" +
+		" / /_//| \\__ \\ |_| |  | | |_) | |_| | ||  __/ (_| / /  | |_| | | | | (__| |_| | (_) | | | \\__ \\\n" +
+		"/___,' |_|___/\\__|_|  |_|_.__/ \\__,_|\\__\\___|\\__,_\\/    \\__,_|_| |_|\\___|\\__|_|\\___/|_| |_|___/"
+	fmt.Println(banner)
+	fmt.Println("[+] " + terminal.Purple + "Distributed Functions " + terminal.Reset)
+	fmt.Println("[+]" + terminal.Purple + " by Gabriel Cordovado 2022-2026" + terminal.Reset)
 	fmt.Println()
 }
 
@@ -35,11 +39,8 @@ func (sc StartCommand) readEnvironmentVariables() (env EnvironmentVariables) {
 
 func (sc StartCommand) verifyMandatoryEnvironmentVariables(env EnvironmentVariables) (err error) {
 
-	if env.MongoDbUri == "" {
-		output := fmt.Sprintf("the environment variable %s needs to be set", MongoDatabaseUriEnv)
-		err = errors.New(output)
-	}
-
+	// there are no mandatory environment variables for now.
+	err = nil
 	return err
 }
 
@@ -66,7 +67,10 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		log.Println(err)
 		return commandline.Terminate
 	}
-	cfg.Database.Url = env.MongoDbUri
+	// Override the database URL if the environment variable is set
+	if env.MongoDbUri != "" {
+		cfg.Database.Url = env.MongoDbUri
+	}
 
 	c, err := core.New(cfg)
 	if err != nil {

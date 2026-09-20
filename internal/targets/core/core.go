@@ -15,10 +15,13 @@ import (
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/message/log"
 	processorCmp "github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/processor"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/scheduler/job"
-	jobDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job/mongo"
-	pipelineDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/pipeline/mongo"
-	runDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/run/in_memory"
-	statisticDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/statistic/mongo"
+	jobMongoDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job/mongo"
+	jobSqliteDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job/sqlite"
+	pipelineMongoDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/pipeline/mongo"
+	pipelineSqliteDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/pipeline/sqlite"
+	runInMemDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/run/in_memory"
+	statisticMongoDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/statistic/mongo"
+	statisticSqliteDb "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/statistic/sqlite"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/database"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/messenger"
@@ -250,7 +253,7 @@ func New(config *Config) (*Core, error) {
 	runnerConfig := &runner.Config{}
 	core.config.FillRunnerConfig(runnerConfig)
 
-	registry := runDb.NewLocalDatabase()
+	registry := runInMemDb.NewLocalDatabase()
 
 	runnerUseCases := runnerUc.UseCases{
 		RunDatabase: registry,
@@ -294,42 +297,85 @@ func New(config *Config) (*Core, error) {
 	databaseConfig := &database.Config{}
 	core.config.FillDatabaseConfig(databaseConfig)
 
-	core.logger.Println("Attempting Connection to NoSQL Database")
-	driver := mongo.NewDriver(core.config.Database.Url)
-
-	timestampA := time.Now()
-	err = driver.Connect()
-	if err != nil {
-		core.logger.Alertln("there was a failure while attempting to connect to mongodb")
-		return nil, err
-	} else {
-		timestampB := time.Now()
-		core.logger.Printf("Connection to NoSQL Database established after %d μs", timestampB.Sub(timestampA).Microseconds())
-	}
-
-	configDatabase, err := pipelineDb.NewMongoDatabase(driver)
-	if err != nil {
-		core.logger.Alertln("failed to initialize config database")
-		return nil, err
-	}
-
-	statDatabase, err := statisticDb.NewMongoDatabase(driver)
-	if err != nil {
-		core.logger.Alertln("failed to initialize statistic database")
-		return nil, err
-	}
-
-	jobDatabase, err := jobDb.NewMongoDatabase(driver)
-	if err != nil {
-		core.logger.Alertln("failed to initialize job database")
-		return nil, err
-	}
-
 	databaseUseCases := databaseUc.UseCases{
-		PipelineDatabase:  configDatabase,
-		StatisticDatabase: statDatabase,
-		JobDatabase:       jobDatabase,
+		PipelineDatabase:  nil,
+		StatisticDatabase: nil,
+		JobDatabase:       nil,
 		Logger:            databaseLogger,
+	}
+
+	if core.config.Database.Type == "mongodb" {
+		core.logger.Println("Attempting Connection to NoSQL Database")
+		driver := mongo.NewDriver(core.config.Database.Url)
+
+		timestampA := time.Now()
+		err = driver.Connect()
+		if err != nil {
+			core.logger.Alertln("there was a failure while attempting to connect to mongodb")
+			return nil, err
+		} else {
+			timestampB := time.Now()
+			core.logger.Printf("Connection to NoSQL Database established after %d μs", timestampB.Sub(timestampA).Microseconds())
+		}
+
+		var err error = nil
+
+		databaseUseCases.PipelineDatabase, err = pipelineMongoDb.NewMongoDatabase(driver)
+		if err != nil {
+			core.logger.Alertln("failed to initialize config database")
+			return nil, err
+		}
+
+		databaseUseCases.StatisticDatabase, err = statisticMongoDb.NewMongoDatabase(driver)
+		if err != nil {
+			core.logger.Alertln("failed to initialize statistic database")
+			return nil, err
+		}
+
+		databaseUseCases.JobDatabase, err = jobMongoDb.NewMongoDatabase(driver)
+		if err != nil {
+			core.logger.Alertln("failed to initialize job database")
+			return nil, err
+		}
+	} else if core.config.Database.Type == "sqlite" {
+
+		databaseUseCases.PipelineDatabase, err = pipelineSqliteDb.NewSQLiteDatabase(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertf("failed to initialize sqlite pipeline database %s\n",
+				core.config.Database.Url)
+			return nil, err
+		}
+		err = databaseUseCases.PipelineDatabase.Load(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertf("failed to load sqlite pipeline database %s\n",
+				core.config.Database.Url)
+			return nil, err
+		}
+
+		databaseUseCases.StatisticDatabase, err = statisticSqliteDb.NewSQLiteDatabase(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertf("failed to initialize sqlite statistic database %s\n",
+				core.config.Database.Url)
+			return nil, err
+		}
+		err = databaseUseCases.StatisticDatabase.Load(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertln("failed to load sqlite statistic database")
+			return nil, err
+		}
+
+		databaseUseCases.JobDatabase, err = jobSqliteDb.NewSQLiteDatabase(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertln("failed to initialize sqlite job database")
+			return nil, err
+		}
+		err = databaseUseCases.JobDatabase.Load(core.config.Database.Url)
+		if err != nil {
+			core.logger.Alertln("failed to load sqlite job database")
+			return nil, err
+		}
+	} else {
+		// TODO : add hook for in-memory database use.
 	}
 
 	core.DatabaseThread, err = database.New(databaseConfig, databaseLogger, databaseUseCases,
@@ -368,7 +414,7 @@ func New(config *Config) (*Core, error) {
 	schedulerConfig := &scheduler.Config{}
 	core.config.FillSchedulerConfig(schedulerConfig)
 
-	sch, err := job.New(jobDatabase)
+	sch, err := job.New(databaseUseCases.JobDatabase)
 	if err != nil {
 		core.logger.Alertln("failed to initialize the job scheduler")
 		return nil, err

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/cmd/fs/controllers"
+	commandline "github.com/GabeCordo/Commandline"
+	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/controllers"
 )
 
 // @title Swagger Example API

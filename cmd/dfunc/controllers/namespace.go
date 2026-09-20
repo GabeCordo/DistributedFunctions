@@ -3,8 +3,8 @@ package controllers
 import (
 	"fmt"
 
-	"github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/cmd/fs/local"
+	commandline "github.com/GabeCordo/Commandline"
+	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
 )
 
 type NamespaceController struct {
