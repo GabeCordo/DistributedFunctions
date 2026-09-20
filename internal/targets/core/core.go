@@ -173,6 +173,11 @@ func New(config *Config) (*Core, error) {
 	core.logger = coreLogger
 	core.logger.SetColour(terminal.Purple)
 
+	// The core shall display a marshalled version of the config on the terminal
+	// so an operator can verify which config was loaded.
+	core.logger.Println("Loading core configuration from disk")
+	config.Print()
+
 	// REST API LOGICAL THREAD
 
 	restLogger, err := text_logging.New(RestAPI.ToString(), &core.config.Debug)

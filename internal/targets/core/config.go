@@ -22,6 +22,7 @@ import (
 )
 
 const defaultFilePerm = 0600
+const hiddenCredentialsString = "******"
 
 type Config struct {
 	Name               string  `yaml:"name"`                  // An operator-defined identifier for the core instance.
@@ -86,7 +87,7 @@ type Config struct {
 	} `yaml:"paths"`
 }
 
-func NewConfig(name string) *Config {
+func NewConfig(path, name string) *Config {
 	config := new(Config)
 
 	config.Name = name
@@ -95,7 +96,8 @@ func NewConfig(name string) *Config {
 	config.EnableCors = false
 	config.EnableRepl = false
 
-	config.Database.Type = "file"
+	config.Database.Type = "sqlite"
+	config.Database.Url = fmt.Sprintf("%s/database.sqlite", path)
 
 	config.MaxWaitForResponse = 2
 	config.MountByDefault = true
@@ -117,8 +119,16 @@ func NewConfig(name string) *Config {
 
 func (config *Config) Print() {
 
-	bytes, _ := yaml.Marshal(config)
-	fmt.Println(string(bytes))
+	configWithoutCredentials := *config
+	configWithoutCredentials.Database.Url = hiddenCredentialsString
+	configWithoutCredentials.Messenger.Smtp.Credentials.Password = hiddenCredentialsString
+	configWithoutCredentials.Net.Processor.TLS.Certificate = hiddenCredentialsString
+	configWithoutCredentials.Net.Processor.TLS.PrivateKey = hiddenCredentialsString
+
+	bytes, err := yaml.Marshal(&configWithoutCredentials)
+	if err == nil {
+		fmt.Println(string(bytes))
+	}
 }
 
 func (config *Config) ToYAML(path string) error {
@@ -233,7 +243,7 @@ func (config *Config) FillSchedulerConfig(schedulerConfig *scheduler.Config) {
 	schedulerConfig.SchedulesFolder = config.Paths.Schedules
 }
 
-func YAMLToETLConfig(config *Config, path string) error {
+func YAMLToCoreConfig(config *Config, path string) error {
 
 	if _, err := os.Stat(path); err != nil {
 		// file does not exist
@@ -273,9 +283,10 @@ func GetConfigInstance(configPath ...string) (*Config, error) {
 	}
 
 	if ConfigInstance == nil {
-		ConfigInstance = NewConfig("test")
+		log.Printf("config is being created for the first time since it was not found at %s\n", configPath[0])
+		ConfigInstance = NewConfig(configPath[0], "test")
 
-		if err := YAMLToETLConfig(ConfigInstance, configPath[0]); err == nil {
+		if err := YAMLToCoreConfig(ConfigInstance, configPath[0]); err == nil {
 			// the configPath we found the common for future reference
 			ConfigInstance.Paths.Root = configPath[0]
 			// if the Timeout is not set, then simply default to 2.0
@@ -283,8 +294,8 @@ func GetConfigInstance(configPath ...string) (*Config, error) {
 				ConfigInstance.MaxWaitForResponse = 2
 			}
 		} else {
-			log.Println("(!) the etl configuration file can either not be found or is corrupted")
-			log.Fatal(fmt.Sprintf("%s was not a valid common path\n", configPath))
+			log.Println("(!) the configuration file can either not be found or is corrupted")
+			log.Fatalf("%s was not a valid common path\n", configPath)
 		}
 	}
 

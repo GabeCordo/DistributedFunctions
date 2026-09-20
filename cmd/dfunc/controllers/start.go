@@ -25,7 +25,7 @@ func (sc StartCommand) banner() {
 	fmt.Println()
 }
 
-const MongoDatabaseUriEnv = "MONGO_DATABASE_URI"
+const DatabaseUriEnv = "DATABASE_URI"
 
 type EnvironmentVariables struct {
 	MongoDbUri string
@@ -33,7 +33,7 @@ type EnvironmentVariables struct {
 
 func (sc StartCommand) readEnvironmentVariables() (env EnvironmentVariables) {
 
-	env.MongoDbUri = os.Getenv(MongoDatabaseUriEnv)
+	env.MongoDbUri = os.Getenv(DatabaseUriEnv)
 	return env
 }
 
@@ -55,20 +55,26 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 
 	sc.banner()
 
+	log.Println("reading environment variables")
 	env := sc.readEnvironmentVariables()
+
+	log.Println("verifying environment variables")
 	err := sc.verifyMandatoryEnvironmentVariables(env)
 	if err != nil {
 		log.Println(err)
 		return commandline.Terminate
 	}
 
+	log.Printf("attempting to load config instance at %s\n", DefaultCoreConfigFile)
 	cfg, err := core.GetConfigInstance(DefaultCoreConfigFile)
 	if err != nil {
 		log.Println(err)
 		return commandline.Terminate
 	}
-	// Override the database URL if the environment variable is set
+
+	// Override the database URL if the environment variable is set.
 	if env.MongoDbUri != "" {
+		log.Printf("found the environment variable '%s' defined, will override the config\n", DatabaseUriEnv)
 		cfg.Database.Url = env.MongoDbUri
 	}
 
@@ -77,6 +83,9 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		log.Println(err)
 		return commandline.Terminate
 	}
+
+	log.Println("configuration phase is now complete, starting the core")
+	log.Println()
 
 	c.Run()
 
