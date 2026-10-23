@@ -191,7 +191,7 @@
 				
 				<option value="file67">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/database/handlers.go (31.5%)</option>
 				
-				<option value="file68">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/database/thread.go (47.4%)</option>
+				<option value="file68">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/database/thread.go (53.8%)</option>
 				
 				<option value="file69">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/database/types.go (71.7%)</option>
 				
@@ -8312,17 +8312,17 @@ func (t *Thread) Start() <span class="cov5" title="3">{
 
         for </span><span class="cov10" title="10">{
                 select </span>{
-                case iReq = &lt;-t.channels.c9:<span class="cov7" title="5">
-                        </span><span class="cov7" title="5">{
+                case iReq = &lt;-t.channels.c9:<span class="cov6" title="4">
+                        </span><span class="cov6" title="4">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov7" title="5">{
+                                if oRsp != nil </span><span class="cov6" title="4">{
                                         t.channels.c10 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c24:<span class="cov3" title="2">
-                        </span><span class="cov3" title="2">{
+                case iReq = &lt;-t.channels.c24:<span class="cov5" title="3">
+                        </span><span class="cov5" title="3">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov3" title="2">{
+                                if oRsp != nil </span><span class="cov5" title="3">{
                                         t.channels.c25 &lt;- oRsp
                                 }</span>
                         }
@@ -8626,10 +8626,10 @@ func (t *Thread) Start() <span class="cov7" title="6">{
 
         for </span><span class="cov10" title="14">{
                 select </span>{
-                case iReq = &lt;-t.channels.c1:<span class="cov6" title="5">
-                        </span><span class="cov6" title="5">{
+                case iReq = &lt;-t.channels.c1:<span class="cov1" title="1">
+                        </span><span class="cov1" title="1">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov6" title="5">{
+                                if oRsp != nil </span><span class="cov1" title="1">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c2 &lt;- oRsp
                                 }</span>
@@ -8642,18 +8642,18 @@ func (t *Thread) Start() <span class="cov7" title="6">{
                                         t.channels.c12 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c15:<span class="cov0" title="0">
-                        </span><span class="cov0" title="0">{
+                case iReq = &lt;-t.channels.c15:<span class="cov3" title="2">
+                        </span><span class="cov3" title="2">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov0" title="0">{
+                                if oRsp != nil </span><span class="cov3" title="2">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c16 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c26:<span class="cov1" title="1">
-                        </span><span class="cov1" title="1">{
+                case iReq = &lt;-t.channels.c26:<span class="cov4" title="3">
+                        </span><span class="cov4" title="3">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov1" title="1">{
+                                if oRsp != nil </span><span class="cov4" title="3">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c27 &lt;- oRsp
                                 }</span>
