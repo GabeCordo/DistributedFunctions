@@ -1,7 +1,14 @@
+// Package socket
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  connection.go
 package socket
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net"
 )
@@ -251,6 +258,7 @@ func (c *Connection) Listen() (err error) {
 		} else {
 			// likely an EOF, the TCP connection has severed, we need to
 			// re-attempt a connection to the core
+			fmt.Println(err)
 			c.queues.interrupts <- eventFunctionFailed
 			break
 		}

@@ -4,8 +4,9 @@ go 1.25.0
 
 require (
 	github.com/BurntSushi/toml v1.5.0
-	github.com/GabeCordo/Commandline v0.4.0
+	github.com/GabeCordo/Commandline v0.5.1
 	github.com/GabeCordo/ScalingFunctions v0.5.0
+	github.com/mattn/go-sqlite3 v1.14.22
 	go.mongodb.org/mongo-driver v1.17.7
 	gopkg.in/yaml.v3 v3.0.1
 )

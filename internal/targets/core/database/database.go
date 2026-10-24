@@ -8,6 +8,7 @@ import (
 
 var NotImplemented = errors.New("the database function is not implemented")
 var NotConnected = errors.New("the database is not connected")
+var AlreadyExists = errors.New("the database already has a record with the same identifier")
 
 // Interval
 // Contains information about how often a job should be statistic.

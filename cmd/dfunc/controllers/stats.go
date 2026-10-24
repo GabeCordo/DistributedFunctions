@@ -8,10 +8,10 @@ import (
 	"syscall"
 	"time"
 
+	commandline "github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/api"
 
-	"github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/cmd/fs/local"
+	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
 )
 
 type StatsController struct {

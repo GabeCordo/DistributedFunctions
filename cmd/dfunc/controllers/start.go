@@ -1,27 +1,24 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  start.go
 package controllers
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"os"
 
-	"github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
+	commandline "github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core"
 )
 
 type StartCommand struct {
 }
 
-func (sc StartCommand) banner() {
-	fmt.Println("   __ _            _    \n  / _| | ___   ___| | __\n | |_| |/ _ \\ / __| |/ /\n |  _| | (_) | (__|   < \n |_| |_|\\___/ \\___|_|\\_\\")
-	fmt.Println("[+] " + terminal.Purple + "The Distributed Service Framework " + terminal.Reset)
-	fmt.Println("[+]" + terminal.Purple + " by Gabriel Cordovado 2022-25" + terminal.Reset)
-	fmt.Println()
-}
-
-const MongoDatabaseUriEnv = "MONGO_DATABASE_URI"
+const DatabaseUriEnv = "DATABASE_URI"
 
 type EnvironmentVariables struct {
 	MongoDbUri string
@@ -29,17 +26,14 @@ type EnvironmentVariables struct {
 
 func (sc StartCommand) readEnvironmentVariables() (env EnvironmentVariables) {
 
-	env.MongoDbUri = os.Getenv(MongoDatabaseUriEnv)
+	env.MongoDbUri = os.Getenv(DatabaseUriEnv)
 	return env
 }
 
 func (sc StartCommand) verifyMandatoryEnvironmentVariables(env EnvironmentVariables) (err error) {
 
-	if env.MongoDbUri == "" {
-		output := fmt.Sprintf("the environment variable %s needs to be set", MongoDatabaseUriEnv)
-		err = errors.New(output)
-	}
-
+	// there are no mandatory environment variables for now.
+	err = nil
 	return err
 }
 
@@ -52,27 +46,39 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		return commandline.Terminate
 	}
 
-	sc.banner()
+	fmt.Println(cli.Graphics.Banner)
 
+	log.Println("reading environment variables")
 	env := sc.readEnvironmentVariables()
+
+	log.Println("verifying environment variables")
 	err := sc.verifyMandatoryEnvironmentVariables(env)
 	if err != nil {
 		log.Println(err)
 		return commandline.Terminate
 	}
 
+	log.Printf("attempting to load config instance at %s\n", DefaultCoreConfigFile)
 	cfg, err := core.GetConfigInstance(DefaultCoreConfigFile)
 	if err != nil {
 		log.Println(err)
 		return commandline.Terminate
 	}
-	cfg.Database.Url = env.MongoDbUri
+
+	// Override the database URL if the environment variable is set.
+	if env.MongoDbUri != "" {
+		log.Printf("found the environment variable '%s' defined, will override the config\n", DatabaseUriEnv)
+		cfg.Database.Url = env.MongoDbUri
+	}
 
 	c, err := core.New(cfg)
 	if err != nil {
 		log.Println(err)
 		return commandline.Terminate
 	}
+
+	log.Println("configuration phase is now complete, starting the core")
+	log.Println()
 
 	c.Run()
 

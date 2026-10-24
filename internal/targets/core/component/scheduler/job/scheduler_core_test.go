@@ -1,7 +1,9 @@
 package job
 
 import (
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/database"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job"
@@ -122,6 +124,36 @@ func TestScheduler_GetBy(t *testing.T) {
 	if foundJobs := scheduler.Jobs.Get(f4); len(foundJobs) != 1 {
 		t.Error("expected 1 job to exist with the identifier test3")
 	}
+}
+
+func TestScheduler_WatchWithNilJobs(t *testing.T) {
+	// Test that Watch doesn't panic when scheduler.Jobs is nil
+	scheduler := &Scheduler{}
+	
+	// This should not panic
+	done := make(chan bool)
+	go func() {
+		Watch(scheduler)
+		done <- true
+	}()
+	
+	// Let it run for a bit to ensure it handles the nil case
+	select {
+	case <-done:
+		// This shouldn't happen as Watch runs in an infinite loop
+		t.Error("Watch returned unexpectedly")
+	case <-time.After(100 * time.Millisecond):
+		// Expected - Watch is still running but not panicking
+		fmt.Println("Watch handled nil Jobs gracefully")
+	}
+}
+
+func TestScheduler_PrintWithNilJobs(t *testing.T) {
+	// Test that Print doesn't panic when scheduler.Jobs is nil
+	scheduler := &Scheduler{}
+	
+	// This should not panic
+	scheduler.Print()
 }
 
 func TestScheduler_Delete(t *testing.T) {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
+	commandline "github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core"
 
-	"github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
 	"gopkg.in/yaml.v3"
 )
@@ -16,6 +16,7 @@ var (
 	DefaultFrameworkFolder  = userCacheDir + "/DistributedFunctions/"
 	DefaultConfigsFolder    = DefaultFrameworkFolder + "configs/"
 	DefaultCoreConfigFile   = DefaultFrameworkFolder + "core.yml"
+	DefaultSqliteFile       = DefaultFrameworkFolder + "data.sqlite"
 	DefaultLogsFolder       = DefaultFrameworkFolder + "logs/"
 	DefaultStatisticsFolder = DefaultFrameworkFolder + "statistics/"
 	DefaultSchedulesFolder  = DefaultFrameworkFolder + "schedules/"
@@ -35,6 +36,9 @@ func (ic InitCommand) Run(cli *commandline.CommandLine) commandline.TerminateOnC
 
 	defaultConfig.Cache.Expiry = 2
 	defaultConfig.Cache.MaxSize = 1000
+
+	defaultConfig.Database.Type = "sqlite"
+	defaultConfig.Database.Url = DefaultSqliteFile
 
 	defaultConfig.Messenger.EnableLogging = true
 	defaultConfig.Messenger.LogFiles.Directory = DefaultLogsFolder

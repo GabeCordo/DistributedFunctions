@@ -1,9 +1,17 @@
+// Package socket
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  events.go
 package socket
 
 import (
 	"encoding/json"
-	"github.com/GabeCordo/ScalingFunctions"
+	"fmt"
 	"net"
+
+	"github.com/GabeCordo/ScalingFunctions"
 
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/socket"
 	processor2 "github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/processor"
@@ -128,6 +136,10 @@ func (events Events) OnMessageEvent(id socket.ConnectionId, request *socket.Mess
 					// NOP
 				}
 			}
+		}
+	case socket.Ping:
+		{
+			fmt.Printf("received ping from client %d\n", id)
 		}
 	default:
 		{
