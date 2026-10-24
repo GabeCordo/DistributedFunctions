@@ -1,3 +1,9 @@
+// Package api
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  core.go
 package api
 
 import (
@@ -7,7 +13,7 @@ import (
 	"net/http"
 )
 
-func Gateway() (string, error) {
+func Core() (string, error) {
 
 	rsp, err := http.Get("http://localhost:5023/core")
 	if err != nil {

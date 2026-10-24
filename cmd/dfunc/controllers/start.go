@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  start.go
 package controllers
 
 import (
@@ -6,23 +12,10 @@ import (
 	"os"
 
 	commandline "github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core"
 )
 
 type StartCommand struct {
-}
-
-func (sc StartCommand) banner() {
-	banner := "    ___ _     _        _ _           _           _   ___                 _   _  \n" +
-		"   /   (_)___| |_ _ __(_) |__  _   _| |_ ___  __| | / __\\   _ _ __   ___| |_(_) ___  _ __  ___  \n" +
-		"  / /\\ / / __| __| '__| | '_ \\| | | | __/ _ \\/ _` |/ _\\| | | | '_ \\ / __| __| |/ _ \\| '_ \\/ __|\n" +
-		" / /_//| \\__ \\ |_| |  | | |_) | |_| | ||  __/ (_| / /  | |_| | | | | (__| |_| | (_) | | | \\__ \\\n" +
-		"/___,' |_|___/\\__|_|  |_|_.__/ \\__,_|\\__\\___|\\__,_\\/    \\__,_|_| |_|\\___|\\__|_|\\___/|_| |_|___/"
-	fmt.Println(banner)
-	fmt.Println("[+] " + terminal.Purple + "Distributed Functions " + terminal.Reset)
-	fmt.Println("[+]" + terminal.Purple + " by Gabriel Cordovado 2022-2026" + terminal.Reset)
-	fmt.Println()
 }
 
 const DatabaseUriEnv = "DATABASE_URI"
@@ -53,7 +46,7 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 		return commandline.Terminate
 	}
 
-	sc.banner()
+	fmt.Println(cli.Graphics.Banner)
 
 	log.Println("reading environment variables")
 	env := sc.readEnvironmentVariables()

@@ -16,3 +16,7 @@ type Result struct {
 func (r Result) LastInsertId() (int64, error) {
 	return r.result.LastInsertId()
 }
+
+func (r Result) RowsAffected() (int64, error) {
+	return r.result.RowsAffected()
+}

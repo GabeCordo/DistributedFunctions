@@ -8,6 +8,7 @@
 package sqlite
 
 import (
+	"database/sql"
 	"errors"
 	"fmt"
 	"log"
@@ -96,7 +97,7 @@ func (db *SQLiteDatabase) Get(filter database.Filter) (jobs []*job.Job) {
 	var jobID int64
 	var identifier, namespace, pipeline string
 	var minute, hour, day, month int
-	var key, value sqlite.NullString
+	var key, value sql.NullString
 
 	for rows.Next() {
 
@@ -124,8 +125,8 @@ func (db *SQLiteDatabase) Get(filter database.Filter) (jobs []*job.Job) {
 			Month:  month,
 		}
 
-		if key.Valid() && value.Valid() {
-			j.Metadata[key.String()] = value.String()
+		if key.Valid && value.Valid {
+			j.Metadata[key.String] = value.String
 		}
 	}
 
@@ -287,7 +288,22 @@ func (db *SQLiteDatabase) Delete(filter database.Filter) error {
 	}
 
 	query, args := db.queryBuilder.buildDeleteJobsQuery(filter)
-	return db.driver.Exec(query, args...)
+	result, err := db.driver.ExecResult(query, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to determine how many jobs were deleted: %w", err)
+	}
+
+	// deleting zero rows implies no record matched the filter
+	if rowsAffected == 0 {
+		return database.NotFound
+	}
+
+	return nil
 }
 
 // Save saves the database to disk (for SQLite, this is automatic, but we can implement backup)

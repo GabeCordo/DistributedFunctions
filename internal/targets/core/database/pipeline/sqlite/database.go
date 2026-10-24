@@ -7,6 +7,7 @@
 package sqlite
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -134,7 +135,7 @@ func (db *SQLiteDatabase) getPipelineIRByID(pipelineID int64) (*ScalingFunctions
 	pipelineIRRow := db.driver.QueryRow(query, args...)
 
 	var pipelineIRID int64
-	var onCrashStr, onStartupStr, onTeardownStr sqlite.NullString
+	var onCrashStr, onStartupStr, onTeardownStr sql.NullString
 	if err := pipelineIRRow.Scan(&pipelineIRID, &pipelineID, &onCrashStr, &onStartupStr, &onTeardownStr); err != nil {
 		if sqlite.IsNoRows(err) {
 			return nil, nil
@@ -225,14 +226,14 @@ func (db *SQLiteDatabase) getPipelineIRByID(pipelineID int64) (*ScalingFunctions
 		Pipes:      pipes,
 	}
 
-	if onCrashStr.Valid() {
-		pipelineIR.OnCrash = ScalingFunctions.OnCrash(onCrashStr.String())
+	if onCrashStr.Valid {
+		pipelineIR.OnCrash = ScalingFunctions.OnCrash(onCrashStr.String)
 	}
-	if onStartupStr.Valid() {
-		pipelineIR.OnStartup = onStartupStr.String()
+	if onStartupStr.Valid {
+		pipelineIR.OnStartup = onStartupStr.String
 	}
-	if onTeardownStr.Valid() {
-		pipelineIR.OnTeardown = onTeardownStr.String()
+	if onTeardownStr.Valid {
+		pipelineIR.OnTeardown = onTeardownStr.String
 	}
 
 	return pipelineIR, nil
@@ -382,7 +383,8 @@ func (db *SQLiteDatabase) Replace(filter database.Filter, record *ScalingFunctio
 	pipelineIRRow := db.driver.QueryRow(query, args...)
 
 	var pipelineIRID int64
-	if err := pipelineIRRow.Scan(&pipelineIRID, &pipelineID, nil, nil, nil); err != nil {
+	var onCrashStr, onStartupStr, onTeardownStr sql.NullString
+	if err := pipelineIRRow.Scan(&pipelineIRID, &pipelineID, &onCrashStr, &onStartupStr, &onTeardownStr); err != nil {
 		if !sqlite.IsNoRows(err) {
 			return fmt.Errorf("failed to get pipeline_ir id: %w", err)
 		}
@@ -484,7 +486,22 @@ func (db *SQLiteDatabase) Delete(filter database.Filter) error {
 
 	// Delete by namespace and identifier - cascade will handle the rest
 	query, args := db.queryBuilder.buildDeletePipelineQuery(filter.Namespace, filter.Identifier)
-	return db.driver.Exec(query, args...)
+	result, err := db.driver.ExecResult(query, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to determine how many pipelines were deleted: %w", err)
+	}
+
+	// deleting zero rows implies no record matched the filter
+	if rowsAffected == 0 {
+		return database.NotFound
+	}
+
+	return nil
 }
 
 // Distinct returns distinct values for a given field

@@ -336,7 +336,22 @@ func (db *SQLiteDatabase) Delete(filter database.Filter) error {
 
 	// Delete by namespace and pipeline - cascade will handle the rest
 	query, args := db.queryBuilder.buildDeleteStatisticsQuery(filter.Namespace, filter.Pipeline)
-	return db.driver.Exec(query, args...)
+	result, err := db.driver.ExecResult(query, args...)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to determine how many statistics were deleted: %w", err)
+	}
+
+	// deleting zero rows implies no record matched the filter
+	if rowsAffected == 0 {
+		return database.NotFound
+	}
+
+	return nil
 }
 
 // Distinct returns distinct values for a given field
