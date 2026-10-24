@@ -119,9 +119,9 @@
 				
 				<option value="file31">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/connection_register.go (0.0%)</option>
 				
-				<option value="file32">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/json_socket/json_client.go (56.4%)</option>
+				<option value="file32">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/json_socket/json_client.go (50.9%)</option>
 				
-				<option value="file33">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/json_socket/json_server.go (52.5%)</option>
+				<option value="file33">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/json_socket/json_server.go (49.2%)</option>
 				
 				<option value="file34">github.com/GabeCordo/DistributedFunctions/internal/shared/socket/json_socket/json_types.go (100.0%)</option>
 				
@@ -185,7 +185,7 @@
 				
 				<option value="file64">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/handlers.go (44.4%)</option>
 				
-				<option value="file65">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/thread.go (75.8%)</option>
+				<option value="file65">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/thread.go (66.7%)</option>
 				
 				<option value="file66">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/types.go (77.8%)</option>
 				
@@ -3745,7 +3745,7 @@ func (client *Client) Connect(host string) error <span class="cov1" title="1">{
                 // that intentionally closes the socket. When the Disconnect() function closes
                 // the socket we will hit this point. We should not attempt to re-connect to the
                 // core if we initiated the socket close.
-                <span class="cov1" title="1">if !client.connection.AttemptReconnect() </span><span class="cov1" title="1">{
+                <span class="cov0" title="0">if !client.connection.AttemptReconnect() </span><span class="cov0" title="0">{
                         break</span>
                 }
 
@@ -3780,7 +3780,7 @@ func (client *Client) Connect(host string) error <span class="cov1" title="1">{
 
         // condition: a connection was established to the server and the client
         //                          closed the TCP connection with the server.
-        <span class="cov1" title="1">return nil</span>
+        <span class="cov0" title="0">return nil</span>
 }
 
 // Send
@@ -3992,7 +3992,7 @@ func (server *Server) clientConnectionHandler(conn net.Conn) <span class="cov1" 
                 log.Println(err)
         }</span>
 
-        <span class="cov1" title="1">err = server.handler.ReleaseConnection(client.Id)
+        <span class="cov0" title="0">err = server.handler.ReleaseConnection(client.Id)
         if err != nil </span><span class="cov0" title="0">{
                 log.Println(err)
         }</span>
@@ -8297,9 +8297,9 @@ func (t *Thread) Start() <span class="cov5" title="3">{
 
         running := true
 
-        go func(running *bool) </span><span class="cov5" title="3">{
+        go func(running *bool) </span><span class="cov0" title="0">{
                 // cleaning the t of expired records
-                for *running </span><span class="cov5" title="3">{
+                for *running </span><span class="cov0" title="0">{
                         time.Sleep(1 * time.Minute)
                         // every minute, attempt to clean the t by removing any records that
                         // may have expired since we last checked
@@ -8626,34 +8626,34 @@ func (t *Thread) Start() <span class="cov7" title="6">{
 
         for </span><span class="cov10" title="14">{
                 select </span>{
-                case iReq = &lt;-t.channels.c1:<span class="cov1" title="1">
-                        </span><span class="cov1" title="1">{
+                case iReq = &lt;-t.channels.c1:<span class="cov4" title="3">
+                        </span><span class="cov4" title="3">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov1" title="1">{
+                                if oRsp != nil </span><span class="cov4" title="3">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c2 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c11:<span class="cov3" title="2">
-                        </span><span class="cov3" title="2">{
+                case iReq = &lt;-t.channels.c11:<span class="cov4" title="3">
+                        </span><span class="cov4" title="3">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov3" title="2">{
+                                if oRsp != nil </span><span class="cov4" title="3">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c12 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c15:<span class="cov3" title="2">
-                        </span><span class="cov3" title="2">{
+                case iReq = &lt;-t.channels.c15:<span class="cov1" title="1">
+                        </span><span class="cov1" title="1">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov3" title="2">{
+                                if oRsp != nil </span><span class="cov1" title="1">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c16 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c26:<span class="cov4" title="3">
-                        </span><span class="cov4" title="3">{
+                case iReq = &lt;-t.channels.c26:<span class="cov1" title="1">
+                        </span><span class="cov1" title="1">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov4" title="3">{
+                                if oRsp != nil </span><span class="cov1" title="1">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c27 &lt;- oRsp
                                 }</span>
