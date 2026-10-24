@@ -33,7 +33,7 @@ esac
 EXT=""
 [ "$OS" = "windows" ] && EXT=".exe"
 
-ASSET="fs-${OS}-${ARCH}${EXT}"
+ASSET="dfunc-${OS}-${ARCH}${EXT}"
 
 # Select destination directory based on environment and write permissions
 if [ "$DEBUG_INSTALL" = true ]; then
@@ -50,7 +50,7 @@ else
 fi
 
 mkdir -p "$DEST_DIR"
-DEST="${DEST_DIR}/fs${EXT}"
+DEST="${DEST_DIR}/dfunc${EXT}"
 
 if [ "$DEBUG_INSTALL" = true ]; then
   # Debug install: build from source
@@ -63,19 +63,19 @@ if [ "$DEBUG_INSTALL" = true ]; then
   # Navigate to cmd/dfunc and build
   cd "$REPO_ROOT/cmd/dfunc"
   echo "Building from source in cmd/dfunc..."
-  go build -o "fs${EXT}" .
+  go build -o "dfunc${EXT}" .
   
   # Move the built binary to the destination
-  mv "fs${EXT}" "$DEST"
+  mv "dfunc${EXT}" "$DEST"
   chmod +x "$DEST"
   
-  echo "Successfully built and installed fs to ${DEST}"
+  echo "Successfully built and installed dfunc to ${DEST}"
 else
   echo "Downloading ${ASSET}..."
   curl -fsSL "https://github.com/${REPO}/releases/latest/download/${ASSET}" -o "$DEST"
   chmod +x "$DEST"
   
-  echo "Successfully installed fs to ${DEST}"
+  echo "Successfully installed dfunc to ${DEST}"
 fi
 
 if [[ ":$PATH:" != *":${DEST_DIR}:"* ]]; then

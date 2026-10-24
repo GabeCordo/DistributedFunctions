@@ -1,4 +1,4 @@
-name: Go Checkers
+name: Continuous Integration (Go Checkers)
 on:
   pull_request:
   push:

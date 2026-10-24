@@ -1,4 +1,4 @@
-name: Release Build
+name: Continuous Integration (Release Build)
 
 on:
   push:
@@ -48,13 +48,13 @@ jobs:
 
       - name: Build binary for ${{ matrix.platform.name }}
         run: |
-          GOOS=${{ matrix.platform.goos }} GOARCH=${{ matrix.platform.goarch }} CGO_ENABLED=0 go build -o fs-${{ matrix.platform.name }}${{ matrix.platform.ext }} ./cmd/fs
+          GOOS=${{ matrix.platform.goos }} GOARCH=${{ matrix.platform.goarch }} CGO_ENABLED=0 go build -o dfunc-${{ matrix.platform.name }}${{ matrix.platform.ext }} ./cmd/dfunc
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: binary-${{ matrix.platform.name }}
-          path: fs-${{ matrix.platform.name }}${{ matrix.platform.ext }}
+          path: dfunc-${{ matrix.platform.name }}${{ matrix.platform.ext }}
 
   release:
     name: Create Release

@@ -1,4 +1,4 @@
-name: Coverage Report
+name: Continuous Integration (Coverage Report)
 
 on:
   push:
