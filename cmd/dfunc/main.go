@@ -14,9 +14,6 @@ import (
 	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
 )
 
-// @title Swagger Example API
-// @version 1.0
-// @description This is a sample server Petstore server.
 func main() {
 
 	cli := commandline.NewCommandLine()
@@ -30,52 +27,41 @@ func main() {
 	dc := cli.AddCommand("doctor", controllers.DoctorCommand{})
 	dc.SetCategory("utils").SetDescription("verify the integrity of the global files on the log system")
 
-	lc := cli.AddCommand("logs", controllers.LogController{})
-	lc.SetCategory("data").SetDescription(
-		"used to view log files stored on the log system" +
-			"\n\t\t[path] specify the name of the log file" +
-			"\n\t\t[normal|warning|fatal] specify the log priority " +
-			"\n\t\t\t(ex. find fatal errors)")
+	sc := cli.AddCommand("machine", controllers.StartCommand{})
+	sc.SetCategory("utils").SetDescription("start the DistributedFunctions on the host")
 
-	stc := cli.AddCommand("stats", controllers.StatisticsController{})
-	stc.SetCategory("data").SetDescription("used to view the statistic files stored on the system")
+	prc := cli.AddCommand("processors", controllers.ProcessorController{})
+	prc.SetCategory("machine").SetDescription("list the processors connected to the core")
 
-	sc := cli.AddCommand("start", controllers.StartCommand{})
-	sc.SetCategory("utils").SetDescription("start the DistributedFunctions on the log system")
+	mc := cli.AddCommand("modules", controllers.ModuleController{})
+	mc.SetCategory("machine").SetDescription("list the modules mounted on the processors connected to the core")
 
-	rc := cli.AddCommand("repl", controllers.ReplController{})
-	rc.SetCategory("utils").SetDescription("enable or disable the repl when running mango start")
+	fc := cli.AddCommand("functions", controllers.FunctionController{})
+	fc.SetCategory("machine").SetDescription("list the functions available on the processors connected to the core")
 
 	shc := cli.AddCommand("scheduler", controllers.ScheduleController{})
-	shc.SetCategory("utils").SetDescription("create or delete schedules for when clusters should be provisioned")
-
-	cc := cli.AddCommand("config", controllers.ConfigCommand{})
-	cc.SetCategory("utils").SetDescription("update the global DistributedFunctions configuration")
-
-	// util controllers
-
-	ec := cli.AddCommand("example", controllers.ExampleController{})
-	ec.SetCategory("utils").SetDescription("an example processor node to test the gateway")
+	shc.SetCategory("machine").SetDescription("create or delete schedules for when clusters should be provisioned")
 
 	runc := cli.AddCommand("run", controllers.RunController{})
-	runc.SetCategory("utils").SetDescription("run a pipeline on the gateway")
+	runc.SetCategory("machine").SetDescription("run a pipeline on the gateway")
+
+	ppc := cli.AddCommand("pipelines", controllers.PipelinesController{})
+	ppc.SetCategory("machine").SetDescription("bulk pipeline operations")
 
 	pc := cli.AddCommand("pipeline", controllers.PipelineController{})
-	pc.SetCategory("utils").SetDescription("register a pipeline on the gateway")
+	pc.SetCategory("machine").SetDescription("single pipeline operations")
 
 	schc := cli.AddCommand("schedule", controllers.ScheduleController{})
-	schc.SetCategory("utils").SetDescription("schedule jobs on the gateway")
+	schc.SetCategory("machine").SetDescription("schedule jobs on the gateway")
 
-	statc := cli.AddCommand("jobs", controllers.StatsController{})
-	statc.SetCategory("utils").SetDescription("view stats associated with jobs on DistributedFunctions")
+	psc := cli.AddCommand("ps", controllers.PSController{})
+	psc.SetCategory("machine").SetDescription("view the running pipelines")
 
-	// configuration controllers
+	mtc := cli.AddCommand("mount", controllers.MountController{})
+	mtc.SetCategory("machine").SetDescription("mount a module or function on the processors connected to the core")
 
-	nc := cli.AddCommand("namespace", controllers.NamespaceController{})
-	nc.SetCategory("config").SetDescription("switch the namespace used by pops")
-
-	gc := cli.AddCommand("gate", controllers.GatewayController{})
-	gc.SetCategory("config").SetDescription("switch the gateway used by pops")
+	umtc := cli.AddCommand("unmount", controllers.UnMountController{})
+	umtc.SetCategory("machine").SetDescription("unmount a module or function from the processors connected to the core")
 
 	cli.Run()
 }

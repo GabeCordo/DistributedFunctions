@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"os"
 	"sort"
 	"strconv"
 	"time"
@@ -771,10 +772,18 @@ func (t *Thread) debugCallback(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type DebugJSONData struct {
+	Pid int `json:"pid"`
+}
+
 func (t *Thread) getDebugCallback(w http.ResponseWriter, r *http.Request) {
 
 	t.logger.Printf("ping from %s\n", r.RemoteAddr)
-	response := Response{Success: true, Description: "bonjour"}
+	response := Response{
+		Success:     true,
+		Description: "the dfunc process is up and running",
+		Data:        DebugJSONData{Pid: os.Getpid()},
+	}
 	b, _ := json.Marshal(response)
 	_, err := w.Write(b)
 	if err != nil {

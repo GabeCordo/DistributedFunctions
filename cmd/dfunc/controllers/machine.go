@@ -10,8 +10,10 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"os/exec"
 
 	commandline "github.com/GabeCordo/Commandline"
+	"github.com/GabeCordo/DistributedFunctions/internal/shared/api"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core"
 )
 
@@ -38,6 +40,81 @@ func (sc StartCommand) verifyMandatoryEnvironmentVariables(env EnvironmentVariab
 }
 
 func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	runDirective := cli.NextArg()
+	blockingFlag := cli.NextArg() == "--blocking"
+
+	switch runDirective {
+	case "start":
+		{
+			if blockingFlag {
+				return sc.blockingStartRun(cli)
+			} else {
+				return sc.startRun(cli)
+			}
+		}
+	case "stop":
+		{
+			return sc.stopRun(cli)
+		}
+	case "status":
+		{
+			return sc.statusRun(cli)
+		}
+	default:
+		{
+			return commandline.Terminate
+		}
+	}
+}
+
+func (sc StartCommand) startRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	cmd := exec.Command("dfunc", "machine", "start", "--blocking")
+
+	err := cmd.Start()
+	if err != nil {
+		fmt.Println("Failed to start dfunc machine on the host: ", err)
+	}
+
+	return commandline.Terminate
+}
+
+func (sc StartCommand) statusRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	pid, err := api.Ping()
+	if err != nil {
+		fmt.Println("The dfunc machine is offline. Run 'dfunc machine start' to bring the dfunc machine online")
+		return commandline.Terminate
+	}
+
+	fmt.Printf("The dfunc machine is running on the host with the PID '%d'\n", pid)
+
+	return commandline.Terminate
+}
+
+func (sc StartCommand) stopRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	pid, err := api.Ping()
+	if err != nil {
+		log.Println("Could not find a running instace of dfunc machine on the host")
+		return commandline.Terminate
+	}
+
+	proc, err := os.FindProcess(pid)
+	if err != nil {
+		log.Printf("Finding the dfunc machine on the host failed with: %s\n", err)
+		return commandline.Terminate
+	}
+
+	if err := proc.Kill(); err != nil {
+		log.Printf("Killing the dfunc machine on the host failed with: %s\n", err)
+	}
+
+	return commandline.Terminate
+}
+
+func (sc StartCommand) blockingStartRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
 	// check to see that the etl thread has been initialized with the required files
 	// if it has not, fail and tell the operator to call the 'etl init' command

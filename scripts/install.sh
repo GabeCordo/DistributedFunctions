@@ -33,7 +33,7 @@ esac
 EXT=""
 [ "$OS" = "windows" ] && EXT=".exe"
 
-ASSET="dfunc-${OS}-${ARCH}${EXT}"
+BINARY_NAMES=("dfunc" "dfunc-processor")
 
 # Select destination directory based on environment and write permissions
 if [ "$DEBUG_INSTALL" = true ]; then
@@ -50,33 +50,37 @@ else
 fi
 
 mkdir -p "$DEST_DIR"
-DEST="${DEST_DIR}/dfunc${EXT}"
 
 if [ "$DEBUG_INSTALL" = true ]; then
   # Debug install: build from source
   echo "Performing debug install..."
-  
+
   # Get the directory where this script is located
   SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
   REPO_ROOT="$(dirname "$SCRIPT_DIR")"
-  
-  # Navigate to cmd/dfunc and build
-  cd "$REPO_ROOT/cmd/dfunc"
-  echo "Building from source in cmd/dfunc..."
-  go build -o "dfunc${EXT}" .
-  
-  # Move the built binary to the destination
-  mv "dfunc${EXT}" "$DEST"
-  chmod +x "$DEST"
-  
-  echo "Successfully built and installed dfunc to ${DEST}"
+
+  for NAME in "${BINARY_NAMES[@]}"; do
+    # Navigate to cmd/<name> and build
+    cd "$REPO_ROOT/cmd/$NAME"
+    echo "Building from source in cmd/$NAME..."
+    go build -o "${NAME}${EXT}" .
+
+    # Move the built binary to the destination
+    DEST="${DEST_DIR}/${NAME}${EXT}"
+    mv "${NAME}${EXT}" "$DEST"
+    chmod +x "$DEST"
+  done
 else
-  echo "Downloading ${ASSET}..."
-  curl -fsSL "https://github.com/${REPO}/releases/latest/download/${ASSET}" -o "$DEST"
-  chmod +x "$DEST"
-  
-  echo "Successfully installed dfunc to ${DEST}"
+  for NAME in "${BINARY_NAMES[@]}"; do
+    ASSET="${NAME}-${OS}-${ARCH}${EXT}"
+    DEST="${DEST_DIR}/${NAME}${EXT}"
+    echo "Downloading ${ASSET}..."
+    curl -fsSL "https://github.com/${REPO}/releases/latest/download/${ASSET}" -o "$DEST"
+    chmod +x "$DEST"
+  done
 fi
+
+echo "Successfully installed dfunc and dfunc-processor to ${DEST_DIR}"
 
 if [[ ":$PATH:" != *":${DEST_DIR}:"* ]]; then
   echo "Warning: ${DEST_DIR} is not in your PATH."

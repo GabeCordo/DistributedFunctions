@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/GabeCordo/ScalingFunctions"
 	"time"
 
-	"github.com/GabeCordo/Commandline"
-	DistributedFunctions "github.com/GabeCordo/DistributedFunctions"
+	dfunc_processor "github.com/GabeCordo/DistributedFunctions/pkg/dfunc_processor"
+	"github.com/GabeCordo/ScalingFunctions"
+
+	commandline "github.com/GabeCordo/Commandline"
 )
 
 func generator(out chan int) {
@@ -61,7 +62,7 @@ func (controller ExampleController) Run(cli *commandline.CommandLine) commandlin
 		fmt.Print(err)
 	}
 
-	processor := DistributedFunctions.New(repository)
+	processor := dfunc_processor.New(repository)
 	processor.Connect()
 
 	return commandline.Terminate
