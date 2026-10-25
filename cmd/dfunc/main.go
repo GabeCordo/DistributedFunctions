@@ -7,18 +7,12 @@
 package main
 
 import (
+	"time"
+
 	commandline "github.com/GabeCordo/Commandline"
 	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/controllers"
-	"github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
+	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
 )
-
-var banner = "    ___ _     _        _ _           _           _   ___                 _   _  \n" +
-	"   /   (_)___| |_ _ __(_) |__  _   _| |_ ___  __| | / __\\   _ _ __   ___| |_(_) ___  _ __  ___  \n" +
-	"  / /\\ / / __| __| '__| | '_ \\| | | | __/ _ \\/ _` |/ _\\| | | | '_ \\ / __| __| |/ _ \\| '_ \\/ __|\n" +
-	" / /_//| \\__ \\ |_| |  | | |_) | |_| | ||  __/ (_| / /  | |_| | | | | (__| |_| | (_) | | | \\__ \\\n" +
-	"/___,' |_|___/\\__|_|  |_|_.__/ \\__,_|\\__\\___|\\__,_\\/    \\__,_|_| |_|\\___|\\__|_|\\___/|_| |_|___/\n" +
-	"[+] " + terminal.Purple + "Distributed Functions " + terminal.Reset + "\n" +
-	"[+]" + terminal.Purple + " by Gabriel Cordovado 2022-2026" + terminal.Reset + "\n"
 
 // @title Swagger Example API
 // @version 1.0
@@ -26,7 +20,9 @@ var banner = "    ___ _     _        _ _           _           _   ___          
 func main() {
 
 	cli := commandline.NewCommandLine()
-	cli.AddBanner(banner)
+
+	bannerFactor := local.NewBannerFactory()
+	cli.AddBanner(bannerFactor.Create(time.Now()))
 
 	ic := cli.AddCommand("init", controllers.InitCommand{})
 	ic.SetCategory("utils").SetDescription("initialize the global files required to start the DistributedFunctions")
