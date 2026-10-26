@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  unmount.go
 package controllers
 
 import (
@@ -14,6 +20,7 @@ func (controller UnMountController) Run(cli *commandline.CommandLine) (action co
 
 	target := cli.NextArg()
 	if target == commandline.FinalArg {
+		fmt.Println("Missing 'type' parameter: dfunc unmount [type(module|function)]")
 		return commandline.Terminate
 	}
 
@@ -28,6 +35,7 @@ func (controller UnMountController) Run(cli *commandline.CommandLine) (action co
 		}
 	default:
 		{
+			fmt.Printf("Invalid 'type' Parameter: must be 'module' or 'function' but was '%s'\n", target)
 			action = commandline.Terminate
 		}
 	}
@@ -39,22 +47,22 @@ func (controller UnMountController) unmountFunction(cli *commandline.CommandLine
 
 	module := cli.NextArg()
 	if module == commandline.FinalArg {
-		fmt.Println("missing module parameter")
+		fmt.Println("Missing 'module' Parameter: dfunc unmount function [module] [function]")
 		return commandline.Terminate
 	}
 
 	function := cli.NextArg()
 	if function == commandline.FinalArg {
-		fmt.Println("missing function parameter")
+		fmt.Printf("Missing 'function' Parameter: dfunc unmount function %s [function]\n", module)
 		return commandline.Terminate
 	}
 
 	if err := api.UnmountFunction(module, function); err != nil {
-		fmt.Printf("Failed to unmount the function '%s': %s\n", function, err)
+		fmt.Printf("Failed to unmount '%s:%s': %s\n", module, function, err)
 		return commandline.Terminate
 	}
 
-	fmt.Printf("The function '%s' has been unmounted on the dfunc machine\n", function)
+	fmt.Printf("Succesfully unmounted '%s:%s'\n", module, function)
 
 	return commandline.Terminate
 }
@@ -63,16 +71,16 @@ func (controller UnMountController) unmountModule(cli *commandline.CommandLine) 
 
 	module := cli.NextArg()
 	if module == commandline.FinalArg {
-		fmt.Println("missing module parameter")
+		fmt.Println("Missing 'module' Parameter: dfunc unmount module [module]")
 		return commandline.Terminate
 	}
 
 	if err := api.UnmountModule(module); err != nil {
-		fmt.Printf("Failed to unmount the module '%s': %s\n", module, err)
+		fmt.Printf("Failed to unmount '%s': %s\n", module, err)
 		return commandline.Terminate
 	}
 
-	fmt.Printf("The module '%s' has been unmounted on the dfunc machine\n", module)
+	fmt.Printf("Succesfully unmounted '%s'\n", module)
 
 	return commandline.Terminate
 }

@@ -11,7 +11,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"net/http"
 	"sort"
 
@@ -21,7 +20,9 @@ import (
 	"github.com/GabeCordo/ScalingFunctions"
 )
 
-func Connect() error {
+func Connect() (err error) {
+
+	err = nil
 
 	url := fmt.Sprintf("http://localhost:5023/gate?=%saction&=connect", "default")
 
@@ -34,21 +35,18 @@ func Connect() error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", rsp.Status)
+		err = fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	return nil
+	return err
 }
 
-func Disconnect() error {
+func Disconnect() (err error) {
+
+	err = nil
 
 	url := fmt.Sprintf("http://localhost:5023/gate?=%saction&=disconnect", "default")
 	req, err := http.NewRequest(http.MethodPost, url, nil)
@@ -60,120 +58,116 @@ func Disconnect() error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", rsp.Status)
+		err = fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	return nil
+	return err
 }
 
-func Ping() (int, error) {
+func Ping() (pid int, err error) {
 
-	rsp, err := http.Get("http://localhost:8136/debug")
+	pid = -1
+	err = nil
+
+	rsp, err := http.Get(fmt.Sprintf("%s/debug", coreHost))
 	if err != nil {
-		return -1, err
+		return pid, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return -1, fmt.Errorf("bad status: %s", rsp.Status)
+		err = fmt.Errorf("bad status: %s", rsp.Status)
+		return pid, err
 	}
 
 	r := Response{}
 	err = json.NewDecoder(rsp.Body).Decode(&r)
 	if err != nil {
-		return -1, err
+		return pid, err
 	}
 
 	if !r.Success {
-		return -1, fmt.Errorf("the core did not respond to the ping")
+		err = fmt.Errorf("the core did not respond to the ping")
+		return pid, err
 	}
 
 	data, ok := r.Data.(map[string]any)
 	if !ok {
-		return -1, fmt.Errorf("the ping response is missing data")
+		err = fmt.Errorf("the ping response is missing data")
+		return pid, err
 	}
 
-	pid, ok := data["pid"].(float64)
+	fPid, ok := data["pid"].(float64)
 	if !ok {
-		return -1, fmt.Errorf("the ping response does not contain a pid")
+		err = fmt.Errorf("the ping response does not contain a pid")
+		return pid, err
 	}
 
-	return int(pid), nil
+	pid = int(fPid)
+	return pid, err
 }
 
-func GetProcessors() ([]processor.Processor, error) {
+func GetProcessors() (processors []processor.Processor, err error) {
 
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8136/processor", nil)
+	processors = nil
+	err = nil
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/processor", coreHost), nil)
 	if err != nil {
-		return nil, err
+		return processors, err
 	}
 	req.Header.Set("Accept", "application/json")
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return processors, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status: %s", rsp.Status)
+		return processors, fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	response := struct{ Data []processor.Processor }{}
+	response := dataResponse[[]processor.Processor]{}
 	if err = json.NewDecoder(rsp.Body).Decode(&response); err != nil {
-		return nil, err
+		return processors, err
 	}
 
-	return response.Data, nil
+	processors = response.Data
+	return processors, err
 }
 
-func GetModules() ([]processor.ModuleData, error) {
+func GetModules() (modules []processor.ModuleData, err error) {
 
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8136/module", nil)
+	modules = nil
+	err = nil
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/module", coreHost), nil)
 	if err != nil {
-		return nil, err
+		return modules, err
 	}
 	req.Header.Set("Accept", "application/json")
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return modules, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status: %s", rsp.Status)
+		return modules, fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	response := struct{ Data []processor.ModuleData }{}
+	response := dataResponse[[]processor.ModuleData]{}
 	if err = json.NewDecoder(rsp.Body).Decode(&response); err != nil {
-		return nil, err
+		return modules, err
 	}
 
-	return response.Data, nil
+	modules = response.Data
+	return modules, err
 }
 
 type Function struct {
@@ -184,55 +178,69 @@ type Function struct {
 	Returns    []string
 }
 
-func GetFunctions() ([]Function, error) {
+func GetFunctions() (functions []Function, err error) {
+
+	functions = nil
+	err = nil
 
 	modules, err := GetModules()
 	if err != nil {
-		return nil, err
+		return functions, err
 	}
 
-	functions := make([]Function, 0)
+	functions = make([]Function, 0)
 
 	for _, module := range modules {
-		url := fmt.Sprintf("http://localhost:8136/function?module=%s", module.Name)
-
-		req, err := http.NewRequest(http.MethodGet, url, nil)
+		moduleFunctions, err := GetFunctionsInModule(module.Name)
 		if err != nil {
-			return nil, err
+			return functions, err
 		}
-		req.Header.Set("Accept", "application/json")
-
-		rsp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-
-		response := struct{ Data []processor.FunctionData }{}
-		err = json.NewDecoder(rsp.Body).Decode(&response)
-		closeErr := rsp.Body.Close()
-		if err != nil {
-			return nil, err
-		}
-		if closeErr != nil {
-			fmt.Print(closeErr)
-		}
-
-		for _, f := range response.Data {
-			functions = append(functions, Function{
-				Module:     module.Name,
-				Name:       f.Name,
-				Mounted:    f.Mounted,
-				Parameters: f.Parameters,
-				Returns:    f.Returns,
-			})
-		}
+		functions = append(functions, moduleFunctions...)
 	}
 
 	sort.Slice(functions, func(i, j int) bool {
 		return functions[i].Name < functions[j].Name
 	})
 
-	return functions, nil
+	return functions, err
+}
+
+func GetFunctionsInModule(module string) (functions []Function, err error) {
+
+	functions = nil
+	err = nil
+
+	url := fmt.Sprintf("%s/function?module=%s", coreHost, module)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return functions, err
+	}
+	req.Header.Set("Accept", "application/json")
+
+	rsp, err := client.Do(req)
+	if err != nil {
+		return functions, err
+	}
+	defer closeBody(rsp.Body)
+
+	response := dataResponse[[]processor.FunctionData]{}
+	if err = json.NewDecoder(rsp.Body).Decode(&response); err != nil {
+		return functions, err
+	}
+
+	functions = make([]Function, 0, len(response.Data))
+	for _, f := range response.Data {
+		functions = append(functions, Function{
+			Module:     module,
+			Name:       f.Name,
+			Mounted:    f.Mounted,
+			Parameters: f.Parameters,
+			Returns:    f.Returns,
+		})
+	}
+
+	return functions, err
 }
 
 func MountModule(module string) error {
@@ -243,7 +251,9 @@ func UnmountModule(module string) error {
 	return setModuleMounted(module, false)
 }
 
-func setModuleMounted(module string, mounted bool) error {
+func setModuleMounted(module string, mounted bool) (err error) {
+
+	err = nil
 
 	b, err := json.Marshal(struct {
 		Module  string `json:"module"`
@@ -253,7 +263,7 @@ func setModuleMounted(module string, mounted bool) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, "http://localhost:8136/module", bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/module", coreHost), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -263,18 +273,13 @@ func setModuleMounted(module string, mounted bool) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", rsp.Status)
+		err = fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	return nil
+	return err
 }
 
 func MountFunction(module, function string) error {
@@ -285,7 +290,9 @@ func UnmountFunction(module, function string) error {
 	return setFunctionMounted(module, function, false)
 }
 
-func setFunctionMounted(module, function string, mounted bool) error {
+func setFunctionMounted(module, function string, mounted bool) (err error) {
+
+	err = nil
 
 	b, err := json.Marshal(struct {
 		Module   string `json:"module"`
@@ -296,7 +303,7 @@ func setFunctionMounted(module, function string, mounted bool) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPut, "http://localhost:8136/function", bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPut, fmt.Sprintf("%s/function", coreHost), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -306,59 +313,55 @@ func setFunctionMounted(module, function string, mounted bool) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
 		return fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	return nil
+	return err
 }
 
-func IsPipelineOnCore(host, namespace, pl string) (bool, error) {
+func IsPipelineOnCore(host, namespace, pl string) (found bool, err error) {
+
+	found = false
+	err = nil
 
 	url := fmt.Sprintf("%s/pipeline?namespace=%s", host, namespace)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return false, err
+		return found, err
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return false, err
+		return found, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode == http.StatusNotFound {
-		return false, nil
+		return found, err
 	}
 
 	pipelines := make([]ScalingFunctions.PipelineIR, 0)
 	err = json.NewDecoder(rsp.Body).Decode(&pipelines)
 	if err != nil {
-		return false, err
+		return found, err
 	}
 
 	for _, p := range pipelines {
 		if p.Identifier == pl {
-			return true, nil
+			found = true
+			return found, err
 		}
 	}
 
-	return false, nil
+	return found, err
 }
 
-func CreatePipelineOnCore(host, namespace string, pl *ScalingFunctions.PipelineIR) error {
+func CreatePipelineOnCore(host, namespace string, pl *ScalingFunctions.PipelineIR) (err error) {
+
+	err = nil
 
 	url := fmt.Sprintf("%s/pipeline?namespace=%s", host, namespace)
 
@@ -376,21 +379,18 @@ func CreatePipelineOnCore(host, namespace string, pl *ScalingFunctions.PipelineI
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
 		return errors.New("http status code " + rsp.Status)
-	} else {
-		return nil
 	}
+
+	return err
 }
 
-func RemovePipelineFromCore(host, namespace, pipeline string) error {
+func RemovePipelineFromCore(host, namespace, pipeline string) (err error) {
+
+	err = nil
 
 	url := fmt.Sprintf("%s/pipeline?namespace=%s&pipeline=%s", host, namespace, pipeline)
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
@@ -402,20 +402,19 @@ func RemovePipelineFromCore(host, namespace, pipeline string) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
 		return errors.New("http status code " + rsp.Status)
 	}
-	return nil
+
+	return err
 }
 
-func RunPipelineOnCore(host, namespace, pipeline string) (uint64, error) {
+func RunPipelineOnCore(host, namespace, pipeline string) (id uint64, err error) {
+
+	id = 0
+	err = nil
 
 	url := fmt.Sprintf("%s/run", host)
 
@@ -427,40 +426,38 @@ func RunPipelineOnCore(host, namespace, pipeline string) (uint64, error) {
 
 	b, err := json.Marshal(body)
 	if err != nil {
-		return 0, err
+		return id, err
 	}
 
 	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))
 	if err != nil {
-		return 0, err
+		return id, err
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return 0, err
+		return id, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
-	response := &struct{ Id uint64 }{}
+	response := &runResponse{}
 
 	if rsp.StatusCode != http.StatusOK {
-		return 0, errors.New("http status code " + rsp.Status)
+		return id, errors.New("http status code " + rsp.Status)
 	}
 
 	err = json.NewDecoder(rsp.Body).Decode(response)
 	if err != nil {
-		return 0, err
+		return id, err
 	}
 
-	return response.Id, nil
+	id = response.Id
+	return id, err
 }
 
-func StopRun(host string, id uint64) error {
+func StopRun(host string, id uint64) (err error) {
+
+	err = nil
 
 	url := fmt.Sprintf("%s/run?id=%d", host, id)
 	req, err := http.NewRequest(http.MethodDelete, url, nil)
@@ -475,34 +472,38 @@ func StopRun(host string, id uint64) error {
 
 	if rsp.StatusCode != http.StatusOK {
 		return errors.New("something went wrong while stopping the run")
-	} else {
-		return nil
 	}
+
+	return nil
 }
 
-func GetNamespaces() ([]string, error) {
+func GetNamespaces() (namespaces []string, err error) {
 
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8136/namespaces", nil)
+	namespaces = nil
+	err = nil
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/namespaces", coreHost), nil)
 	if err != nil {
-		return nil, err
+		return namespaces, err
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return namespaces, err
 	}
 
-	response := struct{ Data []string }{}
+	response := dataResponse[[]string]{}
 	decodeErr := json.NewDecoder(rsp.Body).Decode(&response)
 	closeErr := rsp.Body.Close()
 	if decodeErr != nil {
-		return nil, decodeErr
+		return namespaces, decodeErr
 	}
 	if closeErr != nil {
 		fmt.Print(closeErr)
 	}
 
-	return response.Data, nil
+	namespaces = response.Data
+	return namespaces, err
 }
 
 type Pipeline struct {
@@ -510,119 +511,138 @@ type Pipeline struct {
 	Identifier string
 }
 
-func GetPipelines() ([]Pipeline, error) {
+func GetPipelines() (pipelines []Pipeline, err error) {
+
+	pipelines = nil
+	err = nil
 
 	namespaces, err := GetNamespaces()
 	if err != nil {
-		return nil, err
+		return pipelines, err
 	}
 
-	pipelines := make([]Pipeline, 0)
+	pipelines = make([]Pipeline, 0)
 
 	for _, namespace := range namespaces {
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:8136/pipeline?namespace=%s", namespace), nil)
+		namespacePipelines, err := GetPipelinesInNamespace(namespace)
 		if err != nil {
-			return nil, err
+			return pipelines, err
 		}
-
-		rsp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-
-		pips := make([]ScalingFunctions.PipelineIR, 0)
-		decodeErr := json.NewDecoder(rsp.Body).Decode(&pips)
-		closeErr := rsp.Body.Close()
-
-		// the namespace does not have any pipelines registered on the core
-		if rsp.StatusCode == http.StatusNotFound {
-			continue
-		}
-		if decodeErr != nil {
-			return nil, decodeErr
-		}
-		if closeErr != nil {
-			fmt.Print(closeErr)
-		}
-
-		for _, p := range pips {
-			pipelines = append(pipelines, Pipeline{
-				Namespace:  namespace,
-				Identifier: p.Identifier,
-			})
-		}
+		pipelines = append(pipelines, namespacePipelines...)
 	}
 
 	sort.Slice(pipelines, func(i, j int) bool {
 		return pipelines[i].Identifier < pipelines[j].Identifier
 	})
 
-	return pipelines, nil
+	return pipelines, err
 }
 
-func GetPipeline(namespace, identifier string) (*ScalingFunctions.PipelineIR, error) {
+func GetPipelinesInNamespace(namespace string) (pipelines []Pipeline, err error) {
 
-	url := fmt.Sprintf("http://localhost:8136/pipeline?namespace=%s&pipeline=%s", namespace, identifier)
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+	pipelines = nil
+	err = nil
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/pipeline?namespace=%s", coreHost, namespace), nil)
 	if err != nil {
-		return nil, err
+		return pipelines, err
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return pipelines, err
+	}
+	defer closeBody(rsp.Body)
+
+	if rsp.StatusCode == http.StatusNotFound {
+		return pipelines, err
+	}
+
+	pips := make([]ScalingFunctions.PipelineIR, 0)
+	if err = json.NewDecoder(rsp.Body).Decode(&pips); err != nil {
+		return pipelines, err
+	}
+
+	pipelines = make([]Pipeline, 0, len(pips))
+	for _, p := range pips {
+		pipelines = append(pipelines, Pipeline{
+			Namespace:  namespace,
+			Identifier: p.Identifier,
+		})
+	}
+
+	return pipelines, err
+}
+
+func GetPipeline(namespace, identifier string) (pipeline *ScalingFunctions.PipelineIR, err error) {
+
+	pipeline = nil
+	err = nil
+
+	url := fmt.Sprintf("%s/pipeline?namespace=%s&pipeline=%s", coreHost, namespace, identifier)
+	req, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return pipeline, err
+	}
+
+	rsp, err := client.Do(req)
+	if err != nil {
+		return pipeline, err
 	}
 
 	pips := make([]ScalingFunctions.PipelineIR, 0)
 	decodeErr := json.NewDecoder(rsp.Body).Decode(&pips)
 	closeErr := rsp.Body.Close()
 	if decodeErr != nil {
-		return nil, decodeErr
+		return pipeline, decodeErr
 	}
 	if closeErr != nil {
 		fmt.Print(closeErr)
 	}
 
-	// the endpoint does not filter on the pipeline identifier, match it locally
 	for i := range pips {
 		if pips[i].Identifier == identifier {
-			return &pips[i], nil
+			pipeline = &pips[i]
+			return pipeline, err
 		}
 	}
 
-	return nil, fmt.Errorf("the pipeline '%s' does not exist in the namespace '%s'", identifier, namespace)
+	err = fmt.Errorf("the pipeline '%s' does not exist in the namespace '%s'", identifier, namespace)
+	return pipeline, err
 }
 
-func GetRuns() ([]*run.Run, error) {
+func GetRuns() (runs []*run.Run, err error) {
+
+	runs = nil
+	err = nil
 
 	namespaces, err := GetNamespaces()
 	if err != nil {
-		return nil, err
+		return runs, err
 	}
 
-	runs := make([]*run.Run, 0)
+	runs = make([]*run.Run, 0)
 
 	for _, namespace := range namespaces {
-		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("http://localhost:8136/run?namespace=%s", namespace), nil)
+		req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/run?namespace=%s", coreHost, namespace), nil)
 		if err != nil {
-			return nil, err
+			return runs, err
 		}
 
 		rsp, err := client.Do(req)
 		if err != nil {
-			return nil, err
+			return runs, err
 		}
 
-		r := struct{ Data []*run.Run }{}
+		r := dataResponse[[]*run.Run]{}
 		decodeErr := json.NewDecoder(rsp.Body).Decode(&r)
 		closeErr := rsp.Body.Close()
 
-		// the namespace does not have any runs tracked by the core
 		if rsp.StatusCode == http.StatusNotFound {
 			continue
 		}
 		if decodeErr != nil {
-			return nil, decodeErr
+			return runs, decodeErr
 		}
 		if closeErr != nil {
 			fmt.Print(closeErr)
@@ -639,47 +659,49 @@ func GetRuns() ([]*run.Run, error) {
 		return runs[i].Id > runs[j].Id
 	})
 
-	return runs, nil
+	return runs, err
 }
 
-func GetJobs() ([]job.Job, error) {
+func GetJobs() (jobs []job.Job, err error) {
 
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:8136/job", nil)
+	jobs = nil
+	err = nil
+
+	req, err := http.NewRequest(http.MethodGet, fmt.Sprintf("%s/job", coreHost), nil)
 	if err != nil {
-		return nil, err
+		return jobs, err
 	}
 
 	rsp, err := client.Do(req)
 	if err != nil {
-		return nil, err
+		return jobs, err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status: %s", rsp.Status)
+		return jobs, fmt.Errorf("bad status: %s", rsp.Status)
 	}
 
-	response := struct{ Data []job.Job }{}
-	if err = json.NewDecoder(rsp.Body).Decode(&response); err != nil {
-		return nil, err
+	response := dataResponse[[]job.Job]{}
+	err = json.NewDecoder(rsp.Body).Decode(&response)
+	if err != nil {
+		return jobs, err
 	}
 
-	return response.Data, nil
+	jobs = response.Data
+	return jobs, err
 }
 
-func CreateJob(job job.Job) error {
+func CreateJob(job job.Job) (err error) {
+
+	err = nil
 
 	b, err := json.Marshal(job)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:8136/job", bytes.NewBuffer(b))
+	req, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/job", coreHost), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -688,23 +710,20 @@ func CreateJob(job job.Job) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", rsp.Status)
-	} else {
-		return nil
+		err = fmt.Errorf("bad status: %s", rsp.Status)
 	}
+
+	return err
 }
 
-func DeleteJob(identifier string) error {
+func DeleteJob(identifier string) (err error) {
 
-	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("http://localhost:8136/job?id=%s", identifier), nil)
+	err = nil
+
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/job?id=%s", coreHost, identifier), nil)
 	if err != nil {
 		return err
 	}
@@ -713,16 +732,11 @@ func DeleteJob(identifier string) error {
 	if err != nil {
 		return err
 	}
-	defer func(Body io.ReadCloser) {
-		err := Body.Close()
-		if err != nil {
-			fmt.Print(err)
-		}
-	}(rsp.Body)
+	defer closeBody(rsp.Body)
 
 	if rsp.StatusCode != http.StatusOK {
-		return fmt.Errorf("bad status: %s", rsp.Status)
-	} else {
-		return nil
+		err = fmt.Errorf("bad status: %s", rsp.Status)
 	}
+
+	return err
 }

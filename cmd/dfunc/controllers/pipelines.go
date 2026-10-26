@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  pipelines.go
 package controllers
 
 import (
@@ -13,9 +19,10 @@ import (
 type PipelinesController struct {
 }
 
-func (controller PipelinesController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller PipelinesController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
-	return controller.showPipelines(cli)
+	action = controller.showPipelines(cli)
+	return action
 }
 
 func (controller PipelinesController) showPipelines(cli *commandline.CommandLine) commandline.TerminateOnCompletion {

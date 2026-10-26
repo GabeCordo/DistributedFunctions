@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  schedule.go
 package controllers
 
 import (
@@ -12,22 +18,20 @@ import (
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job"
 )
 
-const defaultFilePerm = 0600
-
 type ScheduleController struct {
 }
 
-func (controller ScheduleController) Run(cli *commandline.CommandLine) (out commandline.TerminateOnCompletion) {
+func (controller ScheduleController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
 	if cli.Flag(commandline.Create) {
-		out = controller.createScheduleJobs(cli)
+		action = controller.createScheduleJobs(cli)
 	} else if cli.Flag(commandline.Delete) {
-		out = controller.deleteScheduleJobs(cli)
+		action = controller.deleteScheduleJobs(cli)
 	} else {
-		out = controller.showScheduleJobs(cli)
+		action = controller.showScheduleJobs(cli)
 	}
 
-	return out
+	return action
 }
 
 func (controller ScheduleController) showScheduleJobs(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
@@ -58,43 +62,47 @@ func (controller ScheduleController) createScheduleJobs(cli *commandline.Command
 
 	identifier := cli.NextArg()
 	if identifier == commandline.FinalArg {
-		fmt.Println("missing namespace identifier")
+		fmt.Println("Missing 'identifier' Parameter: dfunc schedule create [identifier] [namespace] [pipeline] [minute] [hour] [day] [month]")
 		return commandline.Terminate
 	}
 
 	namespace := cli.NextArg()
 	if namespace == commandline.FinalArg {
-		fmt.Println("missing namespace parameter")
+		fmt.Printf("Missing 'namespace' Parameter: dfunc schedule create %s [namespace] [pipeline] [minute] [hour] [day] [month]\n", identifier)
 		return commandline.Terminate
 	}
 
 	pipeline := cli.NextArg()
 	if pipeline == commandline.FinalArg {
-		fmt.Println("missing pipeline parameter")
+		fmt.Printf("Missing 'pipeline' Parameter: dfunc schedule create %s %s [pipeline] [minute] [hour] [day] [month]\n", identifier, namespace)
 		return commandline.Terminate
 	}
 
 	minute, ok := controller.parseIntervalValue(cli.NextArg())
 	if !ok {
-		fmt.Println("missing or invalid minute parameter")
+		fmt.Printf("Missing or invalid 'minute' Parameter: dfunc schedule create %s %s %s [minute] [hour] [day] [month]\n",
+			identifier, namespace, pipeline)
 		return commandline.Terminate
 	}
 
 	hour, ok := controller.parseIntervalValue(cli.NextArg())
 	if !ok {
-		fmt.Println("missing or invalid hour parameter")
+		fmt.Printf("Missing or invalid 'hour' Parameter: dfunc schedule create %s %s %s %d [hour] [day] [month]\n",
+			identifier, namespace, pipeline, minute)
 		return commandline.Terminate
 	}
 
 	day, ok := controller.parseIntervalValue(cli.NextArg())
 	if !ok {
-		fmt.Println("missing or invalid day parameter")
+		fmt.Printf("Missing or invalid 'day' Parameter: dfunc schedule create %s %s %s %d %d [day] [month]\n",
+			identifier, namespace, pipeline, minute, hour)
 		return commandline.Terminate
 	}
 
 	month, ok := controller.parseIntervalValue(cli.NextArg())
 	if !ok {
-		fmt.Println("missing or invalid month parameter")
+		fmt.Printf("Missing or invalid 'month' Parameter: dfunc schedule create %s %s %s %d %d %d [month]\n",
+			identifier, namespace, pipeline, minute, hour, day)
 		return commandline.Terminate
 	}
 
@@ -120,10 +128,6 @@ func (controller ScheduleController) createScheduleJobs(cli *commandline.Command
 	return commandline.Terminate
 }
 
-// parseIntervalValue
-// converts one of the interval arguments into an int, rejecting values that
-// do not fit in a uint8. A '*' argument matches the crontab wildcard and is
-// stored as the core's wildcard value 0.
 func (controller ScheduleController) parseIntervalValue(input string) (int, bool) {
 
 	if input == "*" {
@@ -143,7 +147,7 @@ func (controller ScheduleController) deleteScheduleJobs(cli *commandline.Command
 
 	identifier := cli.NextArg()
 	if identifier == commandline.FinalArg {
-		fmt.Println("missing job identifier parameter")
+		fmt.Println("Missing 'identifier' Parameter: dfunc schedule delete [identifier]")
 		return commandline.Terminate
 	}
 

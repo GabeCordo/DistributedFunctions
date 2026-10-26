@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  modules.go
 package controllers
 
 import (
@@ -13,7 +19,13 @@ import (
 type ModuleController struct {
 }
 
-func (controller ModuleController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller ModuleController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
+
+	action = controller.getModules(cli)
+	return action
+}
+
+func (controller ModuleController) getModules(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
 	modules, err := api.GetModules()
 	if err != nil {

@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  processors.go
 package controllers
 
 import (
@@ -13,8 +19,13 @@ import (
 type ProcessorController struct {
 }
 
-func (controller ProcessorController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller ProcessorController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
+	action = controller.showProcessors(cli)
+	return action
+}
+
+func (controller ProcessorController) showProcessors(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 	processors, err := api.GetProcessors()
 	if err != nil {
 		fmt.Printf("Failed to retrieve the processors from the dfunc machine: %s\n", err)

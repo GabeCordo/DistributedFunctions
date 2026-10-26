@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  functions.go
 package controllers
 
 import (
@@ -13,7 +19,13 @@ import (
 type FunctionController struct {
 }
 
-func (controller FunctionController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller FunctionController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
+
+	action = controller.showFunctions(cli)
+	return action
+}
+
+func (controller FunctionController) showFunctions(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
 	functions, err := api.GetFunctions()
 	if err != nil {

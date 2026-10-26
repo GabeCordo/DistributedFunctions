@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  pipeline.go
 package controllers
 
 import (
@@ -17,6 +23,7 @@ type PipelineController struct {
 
 func (controller PipelineController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
+	// TODO: Need to implement the pipeline command.
 	return commandline.Terminate
 }
 

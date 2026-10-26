@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  ps.go
 package controllers
 
 import (
@@ -12,7 +18,13 @@ import (
 type PSController struct {
 }
 
-func (controller PSController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller PSController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
+
+	action = controller.showRuns(cli)
+	return action
+}
+
+func (controller PSController) showRuns(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
 	showAllFlag := cli.NextArg() == "-a"
 

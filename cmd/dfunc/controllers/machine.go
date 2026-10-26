@@ -3,7 +3,7 @@
 // Copyright (c) 2026 Gabriel Cordovado
 // All rights reserved
 //
-// Source file:  start.go
+// Source file:  machine.go
 package controllers
 
 import (
@@ -23,12 +23,12 @@ type StartCommand struct {
 const DatabaseUriEnv = "DATABASE_URI"
 
 type EnvironmentVariables struct {
-	MongoDbUri string
+	DatabaseUri string
 }
 
 func (sc StartCommand) readEnvironmentVariables() (env EnvironmentVariables) {
 
-	env.MongoDbUri = os.Getenv(DatabaseUriEnv)
+	env.DatabaseUri = os.Getenv(DatabaseUriEnv)
 	return env
 }
 
@@ -39,7 +39,7 @@ func (sc StartCommand) verifyMandatoryEnvironmentVariables(env EnvironmentVariab
 	return err
 }
 
-func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (sc StartCommand) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
 	runDirective := cli.NextArg()
 	blockingFlag := cli.NextArg() == "--blocking"
@@ -48,24 +48,26 @@ func (sc StartCommand) Run(cli *commandline.CommandLine) commandline.TerminateOn
 	case "start":
 		{
 			if blockingFlag {
-				return sc.blockingStartRun(cli)
+				action = sc.blockingStartRun(cli)
 			} else {
-				return sc.startRun(cli)
+				action = sc.startRun(cli)
 			}
 		}
 	case "stop":
 		{
-			return sc.stopRun(cli)
+			action = sc.stopRun(cli)
 		}
 	case "status":
 		{
-			return sc.statusRun(cli)
+			action = sc.statusRun(cli)
 		}
 	default:
 		{
-			return commandline.Terminate
+			action = commandline.Terminate
 		}
 	}
+
+	return action
 }
 
 func (sc StartCommand) startRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
@@ -116,46 +118,39 @@ func (sc StartCommand) stopRun(cli *commandline.CommandLine) commandline.Termina
 
 func (sc StartCommand) blockingStartRun(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-	// check to see that the etl thread has been initialized with the required files
-	// if it has not, fail and tell the operator to call the 'etl init' command
 	if _, err := os.Stat(DefaultConfigsFolder); err != nil {
-		fmt.Printf("missing configurations folder at %s\nmake sure you run 'DistributedFunctions init'\n", DefaultConfigsFolder)
+		fmt.Printf("Failed to start the dfunc machine: the dfunc configurations folder %s is missing\n", DefaultConfigsFolder)
+		fmt.Println("Run 'dfunc init' to initialize the dfunc machine.")
 		return commandline.Terminate
 	}
 
 	fmt.Println(cli.Graphics.Banner)
 
-	log.Println("reading environment variables")
 	env := sc.readEnvironmentVariables()
 
-	log.Println("verifying environment variables")
 	err := sc.verifyMandatoryEnvironmentVariables(env)
 	if err != nil {
-		log.Println(err)
+		fmt.Printf("Failed to start the dfunc machine: %s\n", err)
 		return commandline.Terminate
 	}
 
-	log.Printf("attempting to load config instance at %s\n", DefaultCoreConfigFile)
 	cfg, err := core.GetConfigInstance(DefaultCoreConfigFile)
 	if err != nil {
-		log.Println(err)
+		fmt.Printf("Failed to start the dfunc machine: %s\n", err)
 		return commandline.Terminate
 	}
 
 	// Override the database URL if the environment variable is set.
-	if env.MongoDbUri != "" {
-		log.Printf("found the environment variable '%s' defined, will override the config\n", DatabaseUriEnv)
-		cfg.Database.Url = env.MongoDbUri
+	if env.DatabaseUri != "" {
+		log.Printf("The environment variable '%s' will override the config\n", DatabaseUriEnv)
+		cfg.Database.Url = env.DatabaseUri
 	}
 
 	c, err := core.New(cfg)
 	if err != nil {
-		log.Println(err)
+		log.Printf("Failed to start the dfunc machine: %s\n", err)
 		return commandline.Terminate
 	}
-
-	log.Println("configuration phase is now complete, starting the core")
-	log.Println()
 
 	c.Run()
 

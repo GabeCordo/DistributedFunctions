@@ -1,3 +1,9 @@
+// Package main
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  main.go
 package main
 
 import (

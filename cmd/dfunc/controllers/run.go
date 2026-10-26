@@ -1,3 +1,9 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  run.go
 package controllers
 
 import (
@@ -27,13 +33,13 @@ func (controller RunController) create(cli *commandline.CommandLine) commandline
 
 	namespace := cli.NextArg()
 	if namespace == commandline.FinalArg {
-		fmt.Println("Bad Arguments expected 'dfunc run [namesapce] [pipeline]")
+		fmt.Println("Missing 'namespace' Parameter: dfunc run [namespace] [pipeline]")
 		return commandline.Terminate
 	}
 
 	pipeline := cli.NextArg()
 	if pipeline == commandline.FinalArg {
-		fmt.Println("Bad Arguments expected 'dfunc run [namesapce] [pipeline]")
+		fmt.Printf("Missing 'pipeline' Parameter: dfunc run %s [pipeline]\n", namespace)
 		return commandline.Terminate
 	}
 
@@ -55,13 +61,13 @@ func (controller RunController) stop(cli *commandline.CommandLine) commandline.T
 
 	runIdStr := cli.NextArg()
 	if runIdStr == commandline.FinalArg {
-		fmt.Println("Bad Arguments expected 'dfunc stop run [id|uint64]")
+		fmt.Println("Missing 'id' Parameter: dfunc stop run [id]")
 		return commandline.Terminate
 	}
 
 	runId, err := strconv.ParseUint(runIdStr, 10, 64)
 	if err != nil {
-		fmt.Println("Bad Arguments expected 'dfunc stop run [id|uint64]")
+		fmt.Printf("Invalid 'id' Parameter: must be a uint64 but was '%s'\n", runIdStr)
 		return commandline.Terminate
 	}
 

@@ -39,9 +39,6 @@ func main() {
 	fc := cli.AddCommand("functions", controllers.FunctionController{})
 	fc.SetCategory("machine").SetDescription("list the functions available on the processors connected to the core")
 
-	shc := cli.AddCommand("scheduler", controllers.ScheduleController{})
-	shc.SetCategory("machine").SetDescription("create or delete schedules for when clusters should be provisioned")
-
 	runc := cli.AddCommand("run", controllers.RunController{})
 	runc.SetCategory("machine").SetDescription("run a pipeline on the gateway")
 
@@ -58,10 +55,10 @@ func main() {
 	psc.SetCategory("machine").SetDescription("view the running pipelines")
 
 	mtc := cli.AddCommand("mount", controllers.MountController{})
-	mtc.SetCategory("machine").SetDescription("mount a module or function on the processors connected to the core")
+	mtc.SetCategory("mounting").SetDescription("mount a module or function on the processors connected to the core")
 
 	umtc := cli.AddCommand("unmount", controllers.UnMountController{})
-	umtc.SetCategory("machine").SetDescription("unmount a module or function from the processors connected to the core")
+	umtc.SetCategory("mounting").SetDescription("unmount a module or function from the processors connected to the core")
 
 	cli.Run()
 }
