@@ -1,3 +1,9 @@
+// Package local
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  namespace.go
 package local
 
 func GetNamespace() string {

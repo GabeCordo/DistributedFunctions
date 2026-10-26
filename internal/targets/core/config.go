@@ -275,27 +275,24 @@ func GetConfigInstance(configPath ...string) (*Config, error) {
 	configLock.Lock()
 	defer configLock.Unlock()
 
-	/* if this is the first time the common is being loaded the develoepr
-	   needs to pass in a configPath to load the common instance from
-	*/
 	if (ConfigInstance == nil) && (len(configPath) < 1) {
-		return nil, errors.New("config path required")
+		return nil, errors.New("The GetConfigInstance(...) function required a path to be provided for the first call")
 	}
 
 	if ConfigInstance == nil {
-		log.Printf("config is being created for the first time since it was not found at %s\n", configPath[0])
 		ConfigInstance = NewConfig(configPath[0], "test")
 
-		if err := YAMLToCoreConfig(ConfigInstance, configPath[0]); err == nil {
-			// the configPath we found the common for future reference
-			ConfigInstance.Paths.Root = configPath[0]
-			// if the Timeout is not set, then simply default to 2.0
-			if ConfigInstance.MaxWaitForResponse == 0 {
-				ConfigInstance.MaxWaitForResponse = 2
-			}
-		} else {
-			log.Println("(!) the configuration file can either not be found or is corrupted")
-			log.Fatalf("%s was not a valid common path\n", configPath)
+		err := YAMLToCoreConfig(ConfigInstance, configPath[0])
+		if err != nil {
+			return nil, errors.New("The path provided to GetConfigInstance(...) is an invalid YAML config")
+		}
+
+		// the configPath we found the common for future reference
+		ConfigInstance.Paths.Root = configPath[0]
+
+		// if the Timeout is not set, then simply default to 2.0
+		if ConfigInstance.MaxWaitForResponse == 0 {
+			ConfigInstance.MaxWaitForResponse = 2
 		}
 	}
 

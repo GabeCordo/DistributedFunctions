@@ -1,154 +1,162 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  schedule.go
 package controllers
 
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 	"strconv"
-	"strings"
+	"text/tabwriter"
 
+	commandline "github.com/GabeCordo/Commandline"
+	"github.com/GabeCordo/DistributedFunctions/internal/shared/api"
+	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/database"
 	"github.com/GabeCordo/DistributedFunctions/internal/targets/core/database/job"
-
-	"github.com/GabeCordo/Commandline"
-	"gopkg.in/yaml.v3"
 )
-
-const defaultFilePerm = 0600
 
 type ScheduleController struct {
 }
 
-// ParseTime
-// turns an interval representation '-' or '-/n' into a duration gap.
-func (controller ScheduleController) ParseTime(input string) int {
+func (controller ScheduleController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
-	if input == "-" {
-		return 60
-	}
-
-	split := strings.Split(input, "/")
-	if len(split) != 2 {
-		return 60
-	}
-
-	if n, err := strconv.Atoi(split[1]); err != nil {
-		return 60
+	if cli.Flag(commandline.Create) {
+		action = controller.createScheduleJobs(cli)
+	} else if cli.Flag(commandline.Delete) {
+		action = controller.deleteScheduleJobs(cli)
 	} else {
-		return n
+		action = controller.showScheduleJobs(cli)
 	}
+
+	return action
 }
 
-func (controller ScheduleController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller ScheduleController) showScheduleJobs(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-	// PARSE THE INCOMING CLI ARGUMENTS
-	jb := new(job.Job)
-	if jb == nil {
-		panic("failed to allocate memory for job.Job")
-	}
-
-	// the Identifier field is required by both the CREATE and DELETE flags
-	jb.Identifier = cli.NextArg()
-	if jb.Identifier == commandline.FinalArg {
-		fmt.Println("missing the identifier parameter")
+	jobs, err := api.GetJobs()
+	if err != nil {
+		fmt.Printf("Failed to retrieve the scheduled jobs from the dfunc machine: %s\n", err)
 		return commandline.Terminate
 	}
 
-	// the module identifier is required by both the CREATE and DELETE flags
-	jb.Namespace = cli.NextArg()
-	if jb.Namespace == commandline.FinalArg {
-		fmt.Println("missing the module parameter")
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
+
+	fmt.Fprintln(w, "JOB ID\tNAMESPACE\tPIPELINE\tMINUTE\tHOUR\tDAY\tMONTH")
+	for _, j := range jobs {
+		fmt.Fprintf(w, "%s\t%s\t%s\t%d\t%d\t%d\t%d\n",
+			j.Identifier, j.Namespace, j.Pipeline,
+			j.Interval.Minute, j.Interval.Hour, j.Interval.Day, j.Interval.Month)
+	}
+
+	if err := w.Flush(); err != nil {
+		fmt.Printf("Failed to print the scheduled jobs: %s\n", err)
+	}
+
+	return commandline.Terminate
+}
+
+func (controller ScheduleController) createScheduleJobs(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	identifier := cli.NextArg()
+	if identifier == commandline.FinalArg {
+		fmt.Println("Missing 'identifier' Parameter: dfunc schedule create [identifier] [namespace] [pipeline] [minute] [hour] [day] [month]")
 		return commandline.Terminate
 	}
 
-	// the pipeline and Minute identifiers are only required when creating a new job
-	// asking for this information for a DELETE operation would be unnecessary.
-	if cli.Flag(commandline.Create) {
-
-		jb.Pipeline = cli.NextArg()
-		if jb.Pipeline == commandline.FinalArg {
-			fmt.Println("missing the cluster parameter")
-			return commandline.Terminate
-		}
-
-		minutes := cli.NextArg()
-		if minutes == commandline.FinalArg {
-			fmt.Println("missing the minutes parameter")
-			return commandline.Terminate
-		} else {
-			jb.Interval.Minute = controller.ParseTime(minutes)
-		}
-	}
-
-	dump := &job.Dump{}
-
-	filePath := fmt.Sprintf("%s/%s.yml", DefaultSchedulesFolder, jb.Namespace)
-	if _, err := os.Stat(filePath); os.IsNotExist(err) && cli.Flag(commandline.Delete) {
-		fmt.Printf("cannot delete scheduler file that does not exist(%s/%s.yml)\n",
-			DefaultSchedulesFolder, jb.Namespace)
+	namespace := cli.NextArg()
+	if namespace == commandline.FinalArg {
+		fmt.Printf("Missing 'namespace' Parameter: dfunc schedule create %s [namespace] [pipeline] [minute] [hour] [day] [month]\n", identifier)
 		return commandline.Terminate
-	} else if err == nil {
-		fmt.Println("[-] scheduler file exists ... pulling data")
-		filePath = filepath.Clean(filePath)
-		if b, err := os.ReadFile(filePath); err == nil {
-			if err = yaml.Unmarshal(b, dump); err != nil {
-				fmt.Println(err)
-			}
-		} else {
-			fmt.Println(err)
-		}
 	}
 
-	// DETERMINE IF THE MODULE FILE EXISTS IN THE SCHEDULER FOLDER
-
-	if cli.Flag(commandline.Create) {
-
-		if dump.Jobs == nil {
-			dump.Jobs = make([]*job.Job, 0)
-		}
-		dump.Jobs = append(dump.Jobs, jb)
-
-		b, err := yaml.Marshal(dump)
-		if err != nil {
-			return commandline.Terminate
-		}
-
-		err = os.WriteFile(filePath, b, defaultFilePerm)
-		if err != nil {
-			fmt.Println(err)
-			return commandline.Terminate
-		}
-
-		fmt.Println("[-] added new job to static scheduler file successfully")
-
-	} else {
-
-		modifiedJobsList := make([]*job.Job, 0)
-		for _, j := range dump.Jobs {
-			if j.Identifier != jb.Identifier {
-				modifiedJobsList = append(modifiedJobsList, j)
-			}
-		}
-
-		fmt.Println("[-] removed job from static scheduler successfully")
-
-		if err := os.Remove(filePath); err != nil {
-			return commandline.Terminate
-		}
-
-		if len(modifiedJobsList) > 0 {
-			fmt.Println("[-] saving changes to static schedules file ...")
-
-			b, err := yaml.Marshal(modifiedJobsList)
-			if err != nil {
-				fmt.Println(err)
-				return commandline.Terminate
-			}
-
-			err = os.WriteFile(filePath, b, defaultFilePerm)
-
-			fmt.Println("[-] updated static scheduler successfully")
-		}
+	pipeline := cli.NextArg()
+	if pipeline == commandline.FinalArg {
+		fmt.Printf("Missing 'pipeline' Parameter: dfunc schedule create %s %s [pipeline] [minute] [hour] [day] [month]\n", identifier, namespace)
+		return commandline.Terminate
 	}
+
+	minute, ok := controller.parseIntervalValue(cli.NextArg())
+	if !ok {
+		fmt.Printf("Missing or invalid 'minute' Parameter: dfunc schedule create %s %s %s [minute] [hour] [day] [month]\n",
+			identifier, namespace, pipeline)
+		return commandline.Terminate
+	}
+
+	hour, ok := controller.parseIntervalValue(cli.NextArg())
+	if !ok {
+		fmt.Printf("Missing or invalid 'hour' Parameter: dfunc schedule create %s %s %s %d [hour] [day] [month]\n",
+			identifier, namespace, pipeline, minute)
+		return commandline.Terminate
+	}
+
+	day, ok := controller.parseIntervalValue(cli.NextArg())
+	if !ok {
+		fmt.Printf("Missing or invalid 'day' Parameter: dfunc schedule create %s %s %s %d %d [day] [month]\n",
+			identifier, namespace, pipeline, minute, hour)
+		return commandline.Terminate
+	}
+
+	month, ok := controller.parseIntervalValue(cli.NextArg())
+	if !ok {
+		fmt.Printf("Missing or invalid 'month' Parameter: dfunc schedule create %s %s %s %d %d %d [month]\n",
+			identifier, namespace, pipeline, minute, hour, day)
+		return commandline.Terminate
+	}
+
+	jb := job.Job{
+		Identifier: identifier,
+		Namespace:  namespace,
+		Pipeline:   pipeline,
+		Interval: database.Interval{
+			Minute: minute,
+			Hour:   hour,
+			Day:    day,
+			Month:  month,
+		},
+	}
+
+	if err := api.CreateJob(jb); err != nil {
+		fmt.Printf("Failed to create the scheduled job: %s\n", err)
+		return commandline.Terminate
+	}
+
+	fmt.Printf("The job '%s' has been scheduled on the dfunc machine\n", jb.Identifier)
+
+	return commandline.Terminate
+}
+
+func (controller ScheduleController) parseIntervalValue(input string) (int, bool) {
+
+	if input == "*" {
+		return 0, true
+	}
+
+	value, err := strconv.ParseUint(input, 10, 8)
+	if err != nil {
+		fmt.Println(err)
+		return 0, false
+	}
+
+	return int(value), true
+}
+
+func (controller ScheduleController) deleteScheduleJobs(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	identifier := cli.NextArg()
+	if identifier == commandline.FinalArg {
+		fmt.Println("Missing 'identifier' Parameter: dfunc schedule delete [identifier]")
+		return commandline.Terminate
+	}
+
+	if err := api.DeleteJob(identifier); err != nil {
+		fmt.Printf("Failed to delete the scheduled job '%s': %s\n", identifier, err)
+		return commandline.Terminate
+	}
+
+	fmt.Printf("The job '%s' has been removed from the dfunc machine\n", identifier)
 
 	return commandline.Terminate
 }

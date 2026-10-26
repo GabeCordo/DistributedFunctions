@@ -1,4 +1,4 @@
-package DistributedFunctions
+package dfunc_processor
 
 import (
 	"github.com/GabeCordo/ScalingFunctions"

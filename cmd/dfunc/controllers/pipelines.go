@@ -1,147 +1,48 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  pipelines.go
 package controllers
 
 import (
 	"fmt"
-	"log"
 	"os"
-	"path/filepath"
-
-	"github.com/GabeCordo/ScalingFunctions"
+	"text/tabwriter"
 
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/api"
 
 	commandline "github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
-	"gopkg.in/yaml.v3"
 )
 
-type PipelineController struct {
+type PipelinesController struct {
 }
 
-func (controller PipelineController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+func (controller PipelinesController) Run(cli *commandline.CommandLine) (action commandline.TerminateOnCompletion) {
 
-	rootPath := cli.NextArg()
-	if rootPath == commandline.FinalArg {
-		log.Println("missing pipeline path file")
-		return commandline.Terminate
-	}
+	action = controller.showPipelines(cli)
+	return action
+}
 
-	// is the provided path an absolute path?
-	// todo: maybe use a os.stat check instead of this dot trick
-	var providedPath string
-	if rootPath[0:1] == "." {
-		workingDirectory, err := filepath.Abs(filepath.Dir(os.Args[0]))
-		if err != nil {
-			log.Fatal(err)
-		}
+func (controller PipelinesController) showPipelines(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-		providedPath = filepath.Join(workingDirectory, rootPath)
-	} else {
-		providedPath = rootPath
-	}
-
-	fInfo, err := os.Stat(providedPath)
+	pipelines, err := api.GetPipelines()
 	if err != nil {
-		log.Printf("the path you provided doesn't seem to exist? %s\n", providedPath)
+		fmt.Printf("Failed to retrieve the pipelines from the dfunc machine: %s\n", err)
 		return commandline.Terminate
 	}
 
-	pipelinePaths := make([]string, 0)
-	pipelines := make([]*ScalingFunctions.PipelineIR, 0)
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 3, ' ', 0)
 
-	// if the path provided is a folder, try to grab all the deployment (pipeline) files
-	// inside the folder and register them on the core
-	if fInfo.IsDir() {
-		err := filepath.Walk(providedPath, func(path string, info os.FileInfo, err error) error {
-			if info.IsDir() || err != nil {
-				return nil
-			}
-			pipelinePaths = append(pipelinePaths, path)
-			return nil
-		})
-		if err != nil {
-			fmt.Println(err)
-		}
-	} else {
-		pipelinePaths = append(pipelinePaths, rootPath)
+	fmt.Fprintln(w, "NAMESPACE\tIDENTIFIER")
+	for _, p := range pipelines {
+		fmt.Fprintf(w, "%s\t%s\n", p.Namespace, p.Identifier)
 	}
 
-	// pull all the pipline files from the paths we have collected
-	for _, pipelinePath := range pipelinePaths {
-
-		pipelinePath = filepath.Clean(pipelinePath)
-		f, err := os.Open(pipelinePath)
-		if err != nil {
-			fmt.Println(err)
-			// TODO : add better error outputs
-			continue
-		}
-
-		p := &struct {
-			Pipeline *ScalingFunctions.PipelineIR `yaml:"pipeline"`
-		}{}
-		if err = yaml.NewDecoder(f).Decode(p); err == nil {
-			pipelines = append(pipelines, p.Pipeline)
-		} else {
-			fmt.Println(err)
-		}
-
-		err = f.Close()
-		if err != nil {
-			fmt.Println(err)
-		}
-	}
-
-	if cli.Flag(commandline.Add) {
-		controller.addPipelines(pipelines)
-	} else if cli.Flag(commandline.Delete) {
-		controller.deletePipelines(pipelines)
-	} else {
-		fmt.Println("no operation specified.")
+	if err := w.Flush(); err != nil {
+		fmt.Printf("Failed to print the pipelines: %s\n", err)
 	}
 
 	return commandline.Terminate
-}
-
-func (controller PipelineController) addPipelines(pipelines []*ScalingFunctions.PipelineIR) {
-
-	core := local.GetCore()
-	namespace := local.GetNamespace()
-
-	// register each pipeline with the gateway
-	for i, p := range pipelines {
-
-		fmt.Printf("[%d] adding pipleine %s ", i, p.Identifier)
-		onCore, err := api.IsPipelineOnCore(core, namespace, p.Identifier)
-		if err != nil {
-			fmt.Println("...skip")
-			continue
-		}
-
-		if !onCore {
-			if err = api.CreatePipelineOnCore(core, namespace, p); err != nil {
-				fmt.Println("... failed")
-			} else {
-				fmt.Println("... done")
-			}
-		} else {
-			fmt.Println("... already exists")
-		}
-
-	}
-}
-
-func (controller PipelineController) deletePipelines(pipelines []*ScalingFunctions.PipelineIR) {
-
-	core := local.GetCore()
-	namespace := local.GetNamespace()
-
-	for i, p := range pipelines {
-		fmt.Printf("[%d] removing pipeline %s...", i, p.Identifier)
-		if err := api.RemovePipelineFromCore(core, namespace, p.Identifier); err == nil {
-			fmt.Println("... done")
-		} else {
-			fmt.Println("... skip")
-		}
-	}
 }

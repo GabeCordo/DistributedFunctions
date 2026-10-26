@@ -1,17 +1,18 @@
+// Package controllers
+//
+// Copyright (c) 2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  run.go
 package controllers
 
 import (
 	"fmt"
-	"os"
-	"os/signal"
 	"strconv"
-	"syscall"
-	"time"
 
 	"github.com/GabeCordo/DistributedFunctions/internal/shared/api"
 
 	commandline "github.com/GabeCordo/Commandline"
-	"github.com/GabeCordo/DistributedFunctions/cmd/dfunc/local"
 )
 
 type RunController struct {
@@ -19,9 +20,7 @@ type RunController struct {
 
 func (controller RunController) Run(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-	if cli.Flag(commandline.Show) {
-		controller.show(cli)
-	} else if cli.Flag(commandline.Stop) {
+	if cli.Flag(commandline.Stop) {
 		controller.stop(cli)
 	} else {
 		controller.create(cli)
@@ -30,103 +29,55 @@ func (controller RunController) Run(cli *commandline.CommandLine) commandline.Te
 	return commandline.Terminate
 }
 
-func (controller RunController) create(cli *commandline.CommandLine) {
+func (controller RunController) create(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
+
+	namespace := cli.NextArg()
+	if namespace == commandline.FinalArg {
+		fmt.Println("Missing 'namespace' Parameter: dfunc run [namespace] [pipeline]")
+		return commandline.Terminate
+	}
 
 	pipeline := cli.NextArg()
 	if pipeline == commandline.FinalArg {
-		fmt.Println("you need to specify a pipeline to run")
-		return
+		fmt.Printf("Missing 'pipeline' Parameter: dfunc run %s [pipeline]\n", namespace)
+		return commandline.Terminate
 	}
 
-	watch := cli.NextArg() == "--watch"
-
-	core := local.GetCore()
-	namespace := local.GetNamespace()
-
-	fmt.Printf("trying to run %s.%s", namespace, pipeline)
+	core := "http://localhost:8136"
 	runId, err := api.RunPipelineOnCore(core, namespace, pipeline)
 	if err != nil {
-		fmt.Println("something went wrong :( is the core running?")
-		return
+		fmt.Printf("Failed to run the pipeline: %s\n", err)
+		return commandline.Terminate
 	}
 
-	if !watch {
-		fmt.Printf(" -> track with id %d\n", runId)
-	}
+	// the controller must only output the id of the run that was succesfully created
+	// note: outputting other information makes it difficult for automated tools to use the output
+	fmt.Println(runId)
 
-	sigs := make(chan os.Signal, 1)
-
-	go func() {
-		idx := 0
-		for {
-			time.Sleep(10 * time.Millisecond)
-
-			run, err := api.GetRunStatus(core, namespace, runId)
-			if err != nil {
-				sigs <- syscall.SIGINT
-			}
-
-			if run.IsRunning() {
-				if idx == 300 {
-					idx = 0
-					fmt.Print(".")
-				}
-				idx++
-			} else {
-				sigs <- syscall.SIGINT
-			}
-		}
-	}()
-
-	signal.Notify(sigs, syscall.SIGTERM, syscall.SIGINT)
-	<-sigs
+	return commandline.Terminate
 }
 
-func (controller RunController) show(cli *commandline.CommandLine) {
+func (controller RunController) stop(cli *commandline.CommandLine) commandline.TerminateOnCompletion {
 
-	idStr := cli.NextArg()
-	if idStr == commandline.FinalArg {
-		fmt.Println("you need to specify a run id")
-		return
+	runIdStr := cli.NextArg()
+	if runIdStr == commandline.FinalArg {
+		fmt.Println("Missing 'id' Parameter: dfunc stop run [id]")
+		return commandline.Terminate
 	}
 
-	id, err := strconv.ParseUint(idStr, 10, 64)
+	runId, err := strconv.ParseUint(runIdStr, 10, 64)
 	if err != nil {
-		fmt.Println("the run id must be a uint64")
-		return
+		fmt.Printf("Invalid 'id' Parameter: must be a uint64 but was '%s'\n", runIdStr)
+		return commandline.Terminate
 	}
 
-	core := local.GetCore()
-	namespace := local.GetNamespace()
-
-	run, err := api.GetRunStatus(core, namespace, id)
+	core := "http://localhost:8136"
+	err = api.StopRun(core, runId)
 	if err != nil {
-		fmt.Println("something went wrong :(")
-		return
-	}
-	fmt.Println(string(run.Status))
-}
-
-func (controller RunController) stop(cli *commandline.CommandLine) {
-
-	idStr := cli.NextArg()
-	if idStr == commandline.FinalArg {
-		fmt.Println("you need to specify a run id")
-		return
-	}
-
-	id, err := strconv.ParseUint(idStr, 10, 64)
-	if err != nil {
-		fmt.Println("the run id must be a uint64")
-		return
-	}
-
-	core := local.GetCore()
-
-	err = api.StopRun(core, id)
-	if err != nil {
-		fmt.Println(err)
+		fmt.Printf("Failed to stop run %d: %s\n", runId, err)
 	} else {
-		fmt.Println("triggered run stop")
+		fmt.Printf("Succesfully stopped run %d\n", runId)
 	}
+
+	return commandline.Terminate
 }
