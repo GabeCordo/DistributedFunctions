@@ -1,3 +1,9 @@
+// Package socket
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
 package socket
 
 import (

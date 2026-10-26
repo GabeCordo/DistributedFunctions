@@ -1,3 +1,9 @@
+// Package local
+//
+// Copyright (c) 2023-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache_types.go
 package local
 
 import (

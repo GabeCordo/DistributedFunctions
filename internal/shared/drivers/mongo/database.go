@@ -1,3 +1,9 @@
+// Package mongo
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
 package mongo
 
 import "go.mongodb.org/mongo-driver/mongo"

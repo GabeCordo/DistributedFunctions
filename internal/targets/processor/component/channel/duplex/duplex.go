@@ -1,3 +1,9 @@
+// Package duplex
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  duplex.go
 package duplex
 
 import (

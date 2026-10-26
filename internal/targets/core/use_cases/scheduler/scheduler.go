@@ -1,3 +1,9 @@
+// Package scheduler
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  scheduler.go
 package scheduler
 
 import (

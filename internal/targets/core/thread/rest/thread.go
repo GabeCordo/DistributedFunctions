@@ -1,3 +1,9 @@
+// Package rest
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
 package rest
 
 import (

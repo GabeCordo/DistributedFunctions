@@ -1,3 +1,9 @@
+// Package logging
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  logging.go
 package logging
 
 import "github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"

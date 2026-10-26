@@ -1,3 +1,9 @@
+// Package thread
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
 package thread
 
 import (

@@ -1,3 +1,9 @@
+// Package processor
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  table.go
 package processor
 
 import (

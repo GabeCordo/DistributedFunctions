@@ -1,3 +1,9 @@
+// Package text_logging
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  text_logging.go
 package text_logging
 
 import (

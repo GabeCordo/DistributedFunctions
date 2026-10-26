@@ -1,3 +1,9 @@
+// Package database
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
 package database
 
 import (

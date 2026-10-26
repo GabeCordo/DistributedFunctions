@@ -1,3 +1,9 @@
+// Package mongo
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  collection.go
 package mongo
 
 import (
