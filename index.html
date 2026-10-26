@@ -209,7 +209,7 @@
 				
 				<option value="file76">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/handlers.go (44.4%)</option>
 				
-				<option value="file77">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/thread.go (66.7%)</option>
+				<option value="file77">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/thread.go (75.8%)</option>
 				
 				<option value="file78">github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread/cache/types.go (77.8%)</option>
 				
@@ -2803,7 +2803,13 @@ func DeleteJob(identifier string) (err error) <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file21" style="display: none">package buffers
+		<pre class="file" id="file21" style="display: none">// Package buffers
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  ringbuffer.go
+package buffers
 
 import "errors"
 
@@ -2928,7 +2934,13 @@ func (ringBuffer *RingBuffer) Size() uint64 <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file22" style="display: none">package mongo
+		<pre class="file" id="file22" style="display: none">// Package mongo
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  collection.go
+package mongo
 
 import (
         "context"
@@ -3067,7 +3079,13 @@ func (collection Collection) DistinctFor(idA, idB, valueB string) (types []any) 
 }</span>
 </pre>
 		
-		<pre class="file" id="file23" style="display: none">package mongo
+		<pre class="file" id="file23" style="display: none">// Package mongo
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package mongo
 
 import "go.mongodb.org/mongo-driver/mongo"
 
@@ -3081,7 +3099,13 @@ func (database Database) Collection(name string) Collection <span class="cov0" t
 }</span>
 </pre>
 		
-		<pre class="file" id="file24" style="display: none">package mongo
+		<pre class="file" id="file24" style="display: none">// Package mongo
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  mongo.go
+package mongo
 
 import (
         "context"
@@ -3403,7 +3427,13 @@ func (t Transaction) Commit() error <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file32" style="display: none">package logging
+		<pre class="file" id="file32" style="display: none">// Package logging
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  logging.go
+package logging
 
 import "github.com/GabeCordo/DistributedFunctions/internal/shared/terminal"
 
@@ -3454,7 +3484,13 @@ type Logger interface {
 }
 </pre>
 		
-		<pre class="file" id="file33" style="display: none">package text_logging
+		<pre class="file" id="file33" style="display: none">// Package text_logging
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  text_logging.go
+package text_logging
 
 import (
         "errors"
@@ -3618,7 +3654,13 @@ func (logger *TextLogger) Panicf(template string, other ...any) <span class="cov
 }
 </pre>
 		
-		<pre class="file" id="file34" style="display: none">package nonce
+		<pre class="file" id="file34" style="display: none">// Package nonce
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  nonce.go
+package nonce
 
 import "sync"
 
@@ -3656,7 +3698,13 @@ func (pool *Pool) Next() Nonce <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file35" style="display: none">package nonce
+		<pre class="file" id="file35" style="display: none">// Package nonce
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  response_table.go
+package nonce
 
 import (
         "errors"
@@ -4024,7 +4072,13 @@ func (c *Connection) Terminate() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file37" style="display: none">package socket
+		<pre class="file" id="file37" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  connection_register.go
+package socket
 
 import (
         "errors"
@@ -4199,7 +4253,13 @@ func (handler *ConnectionRegister) ReleaseConnection(id ConnectionId) (err error
 }
 </pre>
 		
-		<pre class="file" id="file38" style="display: none">package json_socket
+		<pre class="file" id="file38" style="display: none">// Package json_socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  json_client.go
+package json_socket
 
 import (
         "crypto/tls"
@@ -4422,7 +4482,13 @@ func (client *Client) Disconnect() error <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file39" style="display: none">package json_socket
+		<pre class="file" id="file39" style="display: none">// Package json_socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  json_server.go
+package json_socket
 
 import (
         "crypto/tls"
@@ -4613,7 +4679,13 @@ func (server *Server) Send(id socket.ConnectionId, message *socket.Message) erro
 }
 </pre>
 		
-		<pre class="file" id="file40" style="display: none">package json_socket
+		<pre class="file" id="file40" style="display: none">// Package json_socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  json_types.go
+package json_socket
 
 import (
         "encoding/json"
@@ -4653,7 +4725,13 @@ func (dF DecoderFactory) NewDecoder(r io.Reader) socket.Decoder <span class="cov
 }</span>
 </pre>
 		
-		<pre class="file" id="file41" style="display: none">package terminal
+		<pre class="file" id="file41" style="display: none">// Package terminal
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  terminal.go
+package terminal
 
 import "fmt"
 
@@ -4700,7 +4778,13 @@ func NewLine() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file42" style="display: none">package local
+		<pre class="file" id="file42" style="display: none">// Package local
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache_core.go
+package local
 
 import (
         "bytes"
@@ -4873,7 +4957,13 @@ func (cache *Cache) Clean() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file43" style="display: none">package local
+		<pre class="file" id="file43" style="display: none">// Package local
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache_record.go
+package local
 
 import "time"
 
@@ -4885,7 +4975,13 @@ func (record Record) IsExpired() bool <span class="cov10" title="6">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file44" style="display: none">package local
+		<pre class="file" id="file44" style="display: none">// Package local
+//
+// Copyright (c) 2023-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache_types.go
+package local
 
 import (
         "sync"
@@ -4928,7 +5024,13 @@ func NewCache(maxAllowedRecords ...uint32) *Cache <span class="cov10" title="9">
 }
 </pre>
 		
-		<pre class="file" id="file45" style="display: none">package email
+		<pre class="file" id="file45" style="display: none">// Package email
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  email.go
+package email
 
 import (
         "fmt"
@@ -5026,7 +5128,13 @@ func (messenger *Messenger) Flush(source message.Source, destination any) error 
 }
 </pre>
 		
-		<pre class="file" id="file46" style="display: none">package email
+		<pre class="file" id="file46" style="display: none">// Package email
+//
+// Copyright (c) 2023-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  external.go
+package email
 
 import (
         "log"
@@ -5053,7 +5161,13 @@ func sendEmail(message string, credentials SmtpCredentials, receivers []string, 
 }
 </pre>
 		
-		<pre class="file" id="file47" style="display: none">package log
+		<pre class="file" id="file47" style="display: none">// Package log
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  filesystem.go
+package log
 
 import (
         "fmt"
@@ -5098,7 +5212,13 @@ func NewLogFile(bytes []byte) *File <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file48" style="display: none">package log
+		<pre class="file" id="file48" style="display: none">// Package log
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  log.go
+package log
 
 import (
         "errors"
@@ -5304,7 +5424,13 @@ func (logger *Logger) Flush(source message.Source, destination any) error <span 
 }
 </pre>
 		
-		<pre class="file" id="file49" style="display: none">package message
+		<pre class="file" id="file49" style="display: none">// Package message
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  message.go
+package message
 
 import "errors"
 
@@ -5363,7 +5489,13 @@ var LoggingDisabledError = errors.New("logging is currently disabled")
 var LogSaveFailedError = errors.New("warning: cannot save logs to file, the save directory doesn't exist")
 </pre>
 		
-		<pre class="file" id="file50" style="display: none">package processor
+		<pre class="file" id="file50" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  function.go
+package processor
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
@@ -5452,7 +5584,13 @@ func (c *Function) SelectProcessor() *Processor <span class="cov10" title="9">{
 }
 </pre>
 		
-		<pre class="file" id="file51" style="display: none">package processor
+		<pre class="file" id="file51" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  module.go
+package processor
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
@@ -5573,7 +5711,13 @@ func (module *Module) Registered() []FunctionData <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file52" style="display: none">package processor
+		<pre class="file" id="file52" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  processor.go
+package processor
 
 import (
         "time"
@@ -5617,7 +5761,13 @@ func newProcessor(id uint64, remoteAddr string) *Processor <span class="cov10" t
 }</span>
 </pre>
 		
-		<pre class="file" id="file53" style="display: none">package processor
+		<pre class="file" id="file53" style="display: none">// Package processor
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  table.go
+package processor
 
 import (
         "errors"
@@ -5920,7 +6070,13 @@ func (table *Table) Print() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file54" style="display: none">package job
+		<pre class="file" id="file54" style="display: none">// Package job
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  scheduler_core.go
+package job
 
 import (
         "log"
@@ -6022,7 +6178,13 @@ func (scheduler *Scheduler) Print() <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file55" style="display: none">package job
+		<pre class="file" id="file55" style="display: none">// Package job
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  scheduler_types.go
+package job
 
 import (
         "sync"
@@ -6064,7 +6226,13 @@ func (scheduler *Scheduler) ItemsInQueue() int <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file56" style="display: none">package core
+		<pre class="file" id="file56" style="display: none">// Package core
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  config.go
+package core
 
 import (
         "encoding/json"
@@ -6366,7 +6534,13 @@ func GetConfigInstance(configPath ...string) (*Config, error) <span class="cov0"
 }
 </pre>
 		
-		<pre class="file" id="file57" style="display: none">package core
+		<pre class="file" id="file57" style="display: none">// Package core
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  core.go
+package core
 
 import (
         "errors"
@@ -6956,7 +7130,13 @@ func (core *Core) Run() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file58" style="display: none">package contact
+		<pre class="file" id="file58" style="display: none">// Package contact
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  contact.go
+package contact
 
 import (
         "errors"
@@ -7123,7 +7303,13 @@ type Database interface {
 }
 </pre>
 		
-		<pre class="file" id="file59" style="display: none">package in_memory
+		<pre class="file" id="file59" style="display: none">// Package in_memory
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package in_memory
 
 import (
         "sync"
@@ -7203,7 +7389,13 @@ func (db *Database) Print() {<span class="cov1" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file60" style="display: none">package database
+		<pre class="file" id="file60" style="display: none">// Package database
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package database
 
 import (
         "errors"
@@ -7310,7 +7502,13 @@ func (filter Filter) UseOffset() bool <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file61" style="display: none">package in_memory
+		<pre class="file" id="file61" style="display: none">// Package in_memory
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package in_memory
 
 import (
         "errors"
@@ -7551,7 +7749,13 @@ func (localDatabase *LocalDatabase) Print() <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file62" style="display: none">package job
+		<pre class="file" id="file62" style="display: none">// Package job
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  job.go
+package job
 
 import (
         "fmt"
@@ -7630,7 +7834,13 @@ type Database interface {
 }
 </pre>
 		
-		<pre class="file" id="file63" style="display: none">package mongo
+		<pre class="file" id="file63" style="display: none">// Package mongo
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package mongo
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/shared/drivers/mongo"
@@ -8354,7 +8564,13 @@ func (b *SQLiteDatabaseQueryBuilder) buildDeleteJobsQuery(filter database.Filter
 }
 </pre>
 		
-		<pre class="file" id="file66" style="display: none">package in_memory
+		<pre class="file" id="file66" style="display: none">// Package in_memory
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package in_memory
 
 import (
         "encoding/json"
@@ -8635,7 +8851,13 @@ func (localDatabase *LocalDatabase) Distinct(filter database.Filter) ([]any, err
 }</span>
 </pre>
 		
-		<pre class="file" id="file67" style="display: none">package mongo
+		<pre class="file" id="file67" style="display: none">// Package mongo
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package mongo
 
 import (
         "errors"
@@ -9668,7 +9890,13 @@ func (b *SQLiteDatabaseQueryBuilder) buildCheckPipelineExistsQuery(namespace, id
 }</span>
 </pre>
 		
-		<pre class="file" id="file70" style="display: none">package in_memory
+		<pre class="file" id="file70" style="display: none">// Package in_memory
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package in_memory
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
@@ -9819,7 +10047,13 @@ func (localDatabase *LocalDatabase) Print() {<span class="cov1" title="1">
 }</span>
 </pre>
 		
-		<pre class="file" id="file71" style="display: none">package run
+		<pre class="file" id="file71" style="display: none">// Package run
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  run.go
+package run
 
 import (
         "errors"
@@ -10040,7 +10274,13 @@ type Database interface {
 }
 </pre>
 		
-		<pre class="file" id="file72" style="display: none">package in_memory
+		<pre class="file" id="file72" style="display: none">// Package in_memory
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package in_memory
 
 import (
         "encoding/json"
@@ -10214,7 +10454,13 @@ func (localDatabase *LocalDatabase) Print() <span class="cov8" title="1">{
 }
 </pre>
 		
-		<pre class="file" id="file73" style="display: none">package mongo
+		<pre class="file" id="file73" style="display: none">// Package mongo
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package mongo
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
@@ -11162,7 +11408,13 @@ func (b *SQLiteDatabaseQueryBuilder) buildGetStatisticByIDQuery(statisticID int6
 }</span>
 </pre>
 		
-		<pre class="file" id="file76" style="display: none">package cache
+		<pre class="file" id="file76" style="display: none">// Package cache
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package cache
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/targets/core/thread"
@@ -11225,7 +11477,13 @@ func (t *Thread) processPingCache(request *thread.Request, response *thread.Resp
 }
 </pre>
 		
-		<pre class="file" id="file77" style="display: none">package cache
+		<pre class="file" id="file77" style="display: none">// Package cache
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package cache
 
 import (
         "time"
@@ -11241,9 +11499,9 @@ func (t *Thread) Start() <span class="cov5" title="3">{
 
         running := true
 
-        go func(running *bool) </span><span class="cov0" title="0">{
+        go func(running *bool) </span><span class="cov5" title="3">{
                 // cleaning the t of expired records
-                for *running </span><span class="cov0" title="0">{
+                for *running </span><span class="cov5" title="3">{
                         time.Sleep(1 * time.Minute)
                         // every minute, attempt to clean the t by removing any records that
                         // may have expired since we last checked
@@ -11256,17 +11514,17 @@ func (t *Thread) Start() <span class="cov5" title="3">{
 
         for </span><span class="cov10" title="10">{
                 select </span>{
-                case iReq = &lt;-t.channels.c9:<span class="cov1" title="1">
-                        </span><span class="cov1" title="1">{
+                case iReq = &lt;-t.channels.c9:<span class="cov6" title="4">
+                        </span><span class="cov6" title="4">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov1" title="1">{
+                                if oRsp != nil </span><span class="cov6" title="4">{
                                         t.channels.c10 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c24:<span class="cov8" title="6">
-                        </span><span class="cov8" title="6">{
+                case iReq = &lt;-t.channels.c24:<span class="cov5" title="3">
+                        </span><span class="cov5" title="3">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov8" title="6">{
+                                if oRsp != nil </span><span class="cov5" title="3">{
                                         t.channels.c25 &lt;- oRsp
                                 }</span>
                         }
@@ -11314,7 +11572,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file78" style="display: none">package cache
+		<pre class="file" id="file78" style="display: none">// Package cache
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package cache
 
 import (
         "errors"
@@ -11392,7 +11656,13 @@ func New(cfg *Config, logger logging.Logger, cache cache.Cache, channels ...any)
 }
 </pre>
 		
-		<pre class="file" id="file79" style="display: none">package database
+		<pre class="file" id="file79" style="display: none">// Package database
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package database
 
 import (
         "errors"
@@ -11545,7 +11815,13 @@ func (t *Thread) handleUpdatePipelineRecord(request *thread.Request, response *t
 }
 </pre>
 		
-		<pre class="file" id="file80" style="display: none">package database
+		<pre class="file" id="file80" style="display: none">// Package database
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package database
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -11570,10 +11846,10 @@ func (t *Thread) Start() <span class="cov7" title="6">{
 
         for </span><span class="cov10" title="14">{
                 select </span>{
-                case iReq = &lt;-t.channels.c1:<span class="cov1" title="1">
-                        </span><span class="cov1" title="1">{
+                case iReq = &lt;-t.channels.c1:<span class="cov5" title="4">
+                        </span><span class="cov5" title="4">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov1" title="1">{
+                                if oRsp != nil </span><span class="cov5" title="4">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c2 &lt;- oRsp
                                 }</span>
@@ -11586,18 +11862,18 @@ func (t *Thread) Start() <span class="cov7" title="6">{
                                         t.channels.c12 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c15:<span class="cov3" title="2">
-                        </span><span class="cov3" title="2">{
+                case iReq = &lt;-t.channels.c15:<span class="cov1" title="1">
+                        </span><span class="cov1" title="1">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov3" title="2">{
+                                if oRsp != nil </span><span class="cov1" title="1">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c16 &lt;- oRsp
                                 }</span>
                         }
-                case iReq = &lt;-t.channels.c26:<span class="cov4" title="3">
-                        </span><span class="cov4" title="3">{
+                case iReq = &lt;-t.channels.c26:<span class="cov1" title="1">
+                        </span><span class="cov1" title="1">{
                                 oRsp = t.handleRequest(iReq)
-                                if oRsp != nil </span><span class="cov4" title="3">{
+                                if oRsp != nil </span><span class="cov1" title="1">{
                                         thread.CopyMetadata(iReq, oRsp)
                                         t.channels.c27 &lt;- oRsp
                                 }</span>
@@ -11719,7 +11995,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file81" style="display: none">package database
+		<pre class="file" id="file81" style="display: none">// Package database
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package database
 
 import (
         "errors"
@@ -11838,7 +12120,13 @@ func New(cfg *Config, logger logging.Logger, useCases database2.UseCases, channe
 }
 </pre>
 		
-		<pre class="file" id="file82" style="display: none">package thread
+		<pre class="file" id="file82" style="display: none">// Package thread
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  helpers.go
+package thread
 
 import (
         "errors"
@@ -13253,7 +13541,13 @@ func AsyncDeleteRun(pipe chan&lt;- *Request, l logging.Logger, oldRequest *Reque
 }
 </pre>
 		
-		<pre class="file" id="file83" style="display: none">package messenger
+		<pre class="file" id="file83" style="display: none">// Package messenger
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package messenger
 
 import (
         "errors"
@@ -13322,7 +13616,13 @@ func (t *Thread) ProcessCloseLogRequest(request *thread.Request) error <span cla
 }
 </pre>
 		
-		<pre class="file" id="file84" style="display: none">package messenger
+		<pre class="file" id="file84" style="display: none">// Package messenger
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package messenger
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -13418,7 +13718,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file85" style="display: none">package messenger
+		<pre class="file" id="file85" style="display: none">// Package messenger
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package messenger
 
 import (
         "errors"
@@ -13506,7 +13812,13 @@ func New(cfg *Config, logger logging.Logger, messenger message.Messenger, channe
 }
 </pre>
 		
-		<pre class="file" id="file86" style="display: none">package processor
+		<pre class="file" id="file86" style="display: none">// Package processor
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package processor
 
 import (
         processor2 "github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/processor"
@@ -13804,7 +14116,13 @@ func (t *Thread) handleRunnerRespondsToGet(iRequest *thread.Request, iResponse *
 }</span>
 </pre>
 		
-		<pre class="file" id="file87" style="display: none">package processor
+		<pre class="file" id="file87" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package processor
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -14189,7 +14507,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file88" style="display: none">package processor
+		<pre class="file" id="file88" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package processor
 
 import (
         "errors"
@@ -14319,7 +14643,13 @@ func New(cfg *Config, logger logging.Logger, useCases processor2.UseCases, chann
 }
 </pre>
 		
-		<pre class="file" id="file89" style="display: none">package rest
+		<pre class="file" id="file89" style="display: none">// Package rest
+//
+// Copyright (c) 2022-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  callbacks.go
+package rest
 
 import (
         "encoding/json"
@@ -15356,7 +15686,13 @@ func (t *Thread) getJobQueueCallback(w http.ResponseWriter, r *http.Request) <sp
 }
 </pre>
 		
-		<pre class="file" id="file90" style="display: none">package rest
+		<pre class="file" id="file90" style="display: none">// Package rest
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package rest
 
 import (
         "context"
@@ -15520,7 +15856,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file91" style="display: none">package rest
+		<pre class="file" id="file91" style="display: none">// Package rest
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package rest
 
 import (
         "context"
@@ -15643,7 +15985,13 @@ func New(cfg *Config, logger logging.Logger, noncePool *nonce2.Pool, channels ..
 }
 </pre>
 		
-		<pre class="file" id="file92" style="display: none">package runner
+		<pre class="file" id="file92" style="display: none">// Package runner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package runner
 
 import (
         "errors"
@@ -15960,7 +16308,13 @@ func (t *Thread) handleMessengerAckLog(iRequest *thread2.Request, iResponse *thr
 }</span>
 </pre>
 		
-		<pre class="file" id="file93" style="display: none">package runner
+		<pre class="file" id="file93" style="display: none">// Package runner
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package runner
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -16241,7 +16595,13 @@ func (t *Thread) TearDown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file94" style="display: none">package runner
+		<pre class="file" id="file94" style="display: none">// Package runner
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package runner
 
 import (
         "errors"
@@ -16338,7 +16698,13 @@ func NewThread(cfg *Config, logger logging.Logger, useCases runner.UseCases, cha
 }
 </pre>
 		
-		<pre class="file" id="file95" style="display: none">package scheduler
+		<pre class="file" id="file95" style="display: none">// Package scheduler
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package scheduler
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/targets/core/database"
@@ -16395,7 +16761,13 @@ func (t *Thread) handleDeleteJob(request *thread.Request, response *thread.Respo
 }
 </pre>
 		
-		<pre class="file" id="file96" style="display: none">package scheduler
+		<pre class="file" id="file96" style="display: none">// Package scheduler
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package scheduler
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -16517,7 +16889,13 @@ func (t *Thread) TearDown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file97" style="display: none">package scheduler
+		<pre class="file" id="file97" style="display: none">// Package scheduler
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package scheduler
 
 import (
         "errors"
@@ -16771,7 +17149,13 @@ func (events Events) OnMessageEvent(id socket.ConnectionId, request *socket.Mess
 }
 </pre>
 		
-		<pre class="file" id="file99" style="display: none">package socket
+		<pre class="file" id="file99" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package socket
 
 import (
         common "github.com/GabeCordo/DistributedFunctions/internal/shared/socket"
@@ -16838,7 +17222,13 @@ func (t *Thread) handleDeleteRun(request *thread.Request, response *thread.Respo
 }
 </pre>
 		
-		<pre class="file" id="file100" style="display: none">package socket
+		<pre class="file" id="file100" style="display: none">// Package socket
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package socket
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/flags"
@@ -16948,7 +17338,13 @@ func (t *Thread) TearDown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file101" style="display: none">package socket
+		<pre class="file" id="file101" style="display: none">// Package socket
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package socket
 
 import (
         "errors"
@@ -17048,7 +17444,13 @@ func New(cfg *Config, logger logging.Logger, noncePool *nonce2.Pool, useCases *s
 }
 </pre>
 		
-		<pre class="file" id="file102" style="display: none">package thread
+		<pre class="file" id="file102" style="display: none">// Package thread
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package thread
 
 import (
         "errors"
@@ -17288,7 +17690,13 @@ func CopyMetadata(request *Request, response *Response) <span class="cov0" title
 }</span>
 </pre>
 		
-		<pre class="file" id="file103" style="display: none">package cache
+		<pre class="file" id="file103" style="display: none">// Package cache
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache.go
+package cache
 
 import (
         "errors"
@@ -17328,7 +17736,13 @@ func (uc UseCase) Load(identifier string) (data any, err error) <span class="cov
 }
 </pre>
 		
-		<pre class="file" id="file104" style="display: none">package database
+		<pre class="file" id="file104" style="display: none">// Package database
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
+package database
 
 import (
         "errors"
@@ -17493,7 +17907,13 @@ func (uc UseCases) LoadDatabases(folder string) (err error) <span class="cov0" t
 }</span>
 </pre>
 		
-		<pre class="file" id="file105" style="display: none">package processor
+		<pre class="file" id="file105" style="display: none">// Package processor
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  functions.go
+package processor
 
 import (
         "errors"
@@ -17551,7 +17971,13 @@ func (uc UseCases) UnMountFunction(moduleName, clusterName string) error <span c
 }
 </pre>
 		
-		<pre class="file" id="file106" style="display: none">package processor
+		<pre class="file" id="file106" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  modules.go
+package processor
 
 import (
         "errors"
@@ -17652,7 +18078,13 @@ func (uc UseCases) UnMountModule(name string) error <span class="cov0" title="0"
 }
 </pre>
 		
-		<pre class="file" id="file107" style="display: none">package processor
+		<pre class="file" id="file107" style="display: none">// Package processor
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  processor.go
+package processor
 
 import (
         component "github.com/GabeCordo/DistributedFunctions/internal/targets/core/component/processor"
@@ -17693,7 +18125,13 @@ func (uc UseCases) DeleteProcessor(config *component.Config) error <span class="
 }
 </pre>
 		
-		<pre class="file" id="file108" style="display: none">package processor
+		<pre class="file" id="file108" style="display: none">// Package processor
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  run.go
+package processor
 
 import (
         "errors"
@@ -17775,7 +18213,13 @@ func (uc UseCases) UpdateProcessorAfterRunStarted(r *thread.Response) (uint64, e
 }</span>
 </pre>
 		
-		<pre class="file" id="file109" style="display: none">package runner
+		<pre class="file" id="file109" style="display: none">// Package runner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  runner.go
+package runner
 
 import (
         "errors"
@@ -17843,7 +18287,13 @@ func (uc UseCases) CreateRun(namespace, pipeline string, processor uint64, confi
 }
 </pre>
 		
-		<pre class="file" id="file110" style="display: none">package scheduler
+		<pre class="file" id="file110" style="display: none">// Package scheduler
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  scheduler.go
+package scheduler
 
 import (
         "errors"
@@ -17929,7 +18379,13 @@ func (uc UseCases) LoadJobsFromDisk(schedulersFolder string) error <span class="
 }</span>
 </pre>
 		
-		<pre class="file" id="file111" style="display: none">package socket
+		<pre class="file" id="file111" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  socket.go
+package socket
 
 import (
         "crypto/tls"
@@ -17992,7 +18448,13 @@ func (uc *UseCases) SendDataOnSocket(id socket2.ConnectionId, message *socket2.M
 }</span>
 </pre>
 		
-		<pre class="file" id="file112" style="display: none">package duplex
+		<pre class="file" id="file112" style="display: none">// Package duplex
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  duplex.go
+package duplex
 
 import (
         "fmt"
@@ -18239,7 +18701,13 @@ func (mc *ManagedChannel) ToString() string <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file113" style="display: none">package provision
+		<pre class="file" id="file113" style="display: none">// Package provision
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  module.go
+package provision
 
 import (
         "fmt"
@@ -18328,7 +18796,13 @@ func (module *Module) ToConfig() processor.ModuleConfig <span class="cov0" title
 }
 </pre>
 		
-		<pre class="file" id="file114" style="display: none">package provision
+		<pre class="file" id="file114" style="display: none">// Package provision
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  provisioner.go
+package provision
 
 import (
         "fmt"
@@ -18445,7 +18919,13 @@ func (provisioner *Provisioner) SuspendRuns() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file115" style="display: none">package processor
+		<pre class="file" id="file115" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  config.go
+package processor
 
 import (
         "os"
@@ -18529,7 +19009,13 @@ func (config *Config) FillProvisionerConfig(to *provisioner.Config) <span class=
 }</span>
 </pre>
 		
-		<pre class="file" id="file116" style="display: none">package processor
+		<pre class="file" id="file116" style="display: none">// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  processor.go
+package processor
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
@@ -18718,7 +19204,13 @@ func (p *Processor) Connect() <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file117" style="display: none">package thread
+		<pre class="file" id="file117" style="display: none">// Package thread
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  helpers.go
+package thread
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/shared/nonce"
@@ -18794,7 +19286,13 @@ func AsyncModuleAdd(mandatory SocketMandatory, moduleIR *ScalingFunctions.Module
 }</span>
 </pre>
 		
-		<pre class="file" id="file118" style="display: none">package provisioner
+		<pre class="file" id="file118" style="display: none">// Package provisioner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package provisioner
 
 import (
         "errors"
@@ -18855,7 +19353,13 @@ func (t *Thread) handleRegisterModulesToCore(request *thread2.ProvisionerRequest
 }
 </pre>
 		
-		<pre class="file" id="file119" style="display: none">package provisioner
+		<pre class="file" id="file119" style="display: none">// Package provisioner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package provisioner
 
 import (
         "errors"
@@ -18959,7 +19463,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file120" style="display: none">package provisioner
+		<pre class="file" id="file120" style="display: none">// Package provisioner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package provisioner
 
 import (
         "errors"
@@ -19036,7 +19546,13 @@ func NewThread(cfg *Config, useCases *provisioner.UseCases, channels ...interfac
 }
 </pre>
 		
-		<pre class="file" id="file121" style="display: none">package socket
+		<pre class="file" id="file121" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  events.go
+package socket
 
 import (
         "encoding/json"
@@ -19139,7 +19655,13 @@ func (events Events) eventDeleteRun(request *socket.Message) <span class="cov0" 
 }
 </pre>
 		
-		<pre class="file" id="file122" style="display: none">package socket
+		<pre class="file" id="file122" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
+package socket
 
 import (
         common "github.com/GabeCordo/DistributedFunctions/internal/shared/socket"
@@ -19182,7 +19704,13 @@ func (t *Thread) handleSocketRunUpdate(request *thread.SocketRequest) <span clas
 }
 </pre>
 		
-		<pre class="file" id="file123" style="display: none">package socket
+		<pre class="file" id="file123" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
+package socket
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/targets/processor/thread"
@@ -19282,7 +19810,13 @@ func (t *Thread) Teardown() <span class="cov0" title="0">{
 }</span>
 </pre>
 		
-		<pre class="file" id="file124" style="display: none">package socket
+		<pre class="file" id="file124" style="display: none">// Package socket
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  types.go
+package socket
 
 import (
         "crypto/x509"
@@ -19394,7 +19928,13 @@ func NewThread(cfg *Config, logger logging.Logger, useCases *socket.UseCases, ch
 }
 </pre>
 		
-		<pre class="file" id="file125" style="display: none">package thread
+		<pre class="file" id="file125" style="display: none">// Package thread
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  threads.go
+package thread
 
 import (
         "github.com/GabeCordo/DistributedFunctions/internal/shared/nonce"
@@ -19479,7 +20019,13 @@ func NewSocketRequest() *SocketRequest <span class="cov0" title="0">{
 }
 </pre>
 		
-		<pre class="file" id="file126" style="display: none">package provisioner
+		<pre class="file" id="file126" style="display: none">// Package provisioner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  provisioner.go
+package provisioner
 
 import (
         "errors"
@@ -19677,7 +20223,13 @@ func (useCases *UseCases) CheckBacklog(startRun func(request *ProvisionRequest))
 }
 </pre>
 		
-		<pre class="file" id="file127" style="display: none">package socket
+		<pre class="file" id="file127" style="display: none">// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  socket.go
+package socket
 
 import (
         "crypto/x509"
@@ -19775,7 +20327,13 @@ func (uc *UseCases) SendToCore(message *socket.Message) <span class="cov0" title
 }
 </pre>
 		
-		<pre class="file" id="file128" style="display: none">package dfunc_processor
+		<pre class="file" id="file128" style="display: none">// Package dfunc_processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  package.go
+package dfunc_processor
 
 import (
         "github.com/GabeCordo/ScalingFunctions"
