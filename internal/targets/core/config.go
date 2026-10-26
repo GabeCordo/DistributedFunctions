@@ -1,3 +1,9 @@
+// Package core
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  config.go
 package core
 
 import (

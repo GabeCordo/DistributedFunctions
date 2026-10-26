@@ -1,3 +1,9 @@
+// Package terminal
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  terminal.go
 package terminal
 
 import "fmt"

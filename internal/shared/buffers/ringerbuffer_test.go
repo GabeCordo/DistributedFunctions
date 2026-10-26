@@ -1,3 +1,9 @@
+// Package buffers
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  ringerbuffer_test.go
 package buffers
 
 import (

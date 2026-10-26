@@ -1,3 +1,9 @@
+// Package in_memory
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database_test.go
 package in_memory
 
 import (

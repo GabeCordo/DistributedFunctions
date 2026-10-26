@@ -1,3 +1,9 @@
+// Package buffers
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  ringbuffer.go
 package buffers
 
 import "errors"

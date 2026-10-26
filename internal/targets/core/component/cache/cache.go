@@ -1,3 +1,9 @@
+// Package cache
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache.go
 package cache
 
 import "errors"

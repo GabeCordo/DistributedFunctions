@@ -1,3 +1,9 @@
+// Package socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  thread.go
 package socket
 
 import (

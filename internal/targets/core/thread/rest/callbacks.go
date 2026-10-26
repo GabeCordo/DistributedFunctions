@@ -1,3 +1,9 @@
+// Package rest
+//
+// Copyright (c) 2022-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  callbacks.go
 package rest
 
 import (

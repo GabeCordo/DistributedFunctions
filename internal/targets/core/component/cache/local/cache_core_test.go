@@ -1,3 +1,9 @@
+// Package local
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  cache_core_test.go
 package local
 
 import (

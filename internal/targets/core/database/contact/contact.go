@@ -1,3 +1,9 @@
+// Package contact
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  contact.go
 package contact
 
 import (

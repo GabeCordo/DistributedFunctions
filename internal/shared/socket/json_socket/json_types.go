@@ -1,3 +1,9 @@
+// Package json_socket
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  json_types.go
 package json_socket
 
 import (

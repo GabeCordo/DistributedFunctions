@@ -1,3 +1,9 @@
+// Package database
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  database.go
 package database
 
 import (

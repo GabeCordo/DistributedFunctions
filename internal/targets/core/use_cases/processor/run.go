@@ -1,3 +1,9 @@
+// Package processor
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  run.go
 package processor
 
 import (

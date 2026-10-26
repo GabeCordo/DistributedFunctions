@@ -1,3 +1,9 @@
+// Package processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  table_test.go
 package processor
 
 import (

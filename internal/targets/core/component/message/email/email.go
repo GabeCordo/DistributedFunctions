@@ -1,3 +1,9 @@
+// Package email
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  email.go
 package email
 
 import (

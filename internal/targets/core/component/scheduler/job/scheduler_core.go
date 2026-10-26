@@ -1,3 +1,9 @@
+// Package job
+//
+// Copyright (c) 2023-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  scheduler_core.go
 package job
 
 import (

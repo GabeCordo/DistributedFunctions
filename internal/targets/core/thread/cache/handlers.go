@@ -1,3 +1,9 @@
+// Package cache
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  handlers.go
 package cache
 
 import (

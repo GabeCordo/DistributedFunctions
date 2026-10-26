@@ -1,3 +1,9 @@
+// Package dfunc_processor
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  package.go
 package dfunc_processor
 
 import (

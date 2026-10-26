@@ -1,3 +1,9 @@
+// Package runner
+//
+// Copyright (c) 2025-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  runner.go
 package runner
 
 import (

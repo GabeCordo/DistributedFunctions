@@ -1,3 +1,9 @@
+// Package statistic
+//
+// Copyright (c) 2024-2026 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  statistic.go
 package statistic
 
 import (

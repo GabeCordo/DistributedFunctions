@@ -1,3 +1,9 @@
+// Package message
+//
+// Copyright (c) 2024-2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  message.go
 package message
 
 import "errors"

@@ -1,3 +1,9 @@
+// Package nonce
+//
+// Copyright (c) 2025 Gabriel Cordovado
+// All rights reserved
+//
+// Source file:  nonce.go
 package nonce
 
 import "sync"
